@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوابة الانتقال الآمنة | MAZEN</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700;900&family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* المتغيرات اللونية (ستايل فخم، فاتح، مع لمسات ذهبية) */
+        :root {
+            --primary-gold: #c5a059;
+            --primary-gold-hover: #b08d4b;
+            --bg-color: #f7f9fa;
+            --text-main: #2b2b2b;
+            --text-muted: #6b6b6b;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --card-border: rgba(197, 160, 89, 0.3);
+            --shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Tajawal', 'Cairo', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* خلفية متحركة احترافية (أشكال هندسية باهتة) */
+        .bg-shapes {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            background: linear-gradient(135deg, #f7f9fa 0%, #eef1f5 100%);
+        }
+        .shape {
+            position: absolute;
+            filter: blur(60px);
+            opacity: 0.6;
+            animation: float 15s infinite alternate ease-in-out;
+        }
+        .shape.s1 {
+            width: 400px; height: 400px;
+            background: rgba(197, 160, 89, 0.15);
+            top: -100px; right: -100px;
+        }
+        .shape.s2 {
+            width: 300px; height: 300px;
+            background: rgba(255, 255, 255, 0.8);
+            bottom: -50px; left: -50px;
+            animation-duration: 20s;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(30px, 50px) scale(1.1); }
+        }
+
+        /* شاشة التحميل (Loader) */
+        #loader {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.8s cubic-bezier(0.86, 0, 0.07, 1);
+        }
+        .loader-logo {
+            width: 120px;
+            animation: pulse 1.5s infinite alternate;
+            margin-bottom: 20px;
+        }
+        .loader-text {
+            font-size: 1.2rem;
+            color: var(--primary-gold);
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+        .loader-bar {
+            width: 200px;
+            height: 3px;
+            background: #eee;
+            margin-top: 15px;
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
+        }
+        .loader-bar::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; height: 100%;
+            width: 50%;
+            background: var(--primary-gold);
+            animation: loadingBar 1.5s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            100% { transform: scale(1.05); opacity: 1; }
+        }
+        @keyframes loadingBar {
+            0% { left: -50%; }
+            100% { left: 100%; }
+        }
+
+        /* الحاوية الرئيسية (Glassmorphism) */
+        .container {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 50px 40px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transform: translateY(30px);
+            opacity: 0;
+            animation: fadeInUp 1s 0.5s forwards cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+        }
+
+        @keyframes fadeInUp {
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .main-logo {
+            width: 130px;
+            margin-bottom: 25px;
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.05));
+            border-radius: 50%; /* في حال كان اللوجو دائرياً */
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(197, 160, 89, 0.1);
+            color: var(--primary-gold);
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            border: 1px solid rgba(197, 160, 89, 0.2);
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 400;
+            margin-bottom: 5px;
+            color: var(--text-muted);
+        }
+
+        .user-name {
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: var(--text-main);
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #1e1e1e, #6b6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .description {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+        }
+
+        /* زر الانتقال الاحترافي */
+        .btn-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary-gold), #e8d08d);
+            color: #fff;
+            text-decoration: none;
+            padding: 18px 30px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 14px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 0 10px 20px rgba(197, 160, 89, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
+            transform: skewX(-25deg);
+            transition: all 0.7s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 25px rgba(197, 160, 89, 0.4);
+        }
+
+        .btn:hover::before {
+            left: 200%;
+        }
+
+        .btn i {
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .btn:hover i {
+            transform: translateX(-5px);
+        }
+
+        /* الفوتر / الحقوق */
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .footer strong {
+            color: var(--primary-gold);
+            font-weight: 900;
+            letter-spacing: 1px;
+        }
+        
+        .footer span {
+            font-size: 0.75rem;
+            opacity: 0.7;
+        }
+
+        /* رسائل الأخطاء */
+        .error-container {
+            display: none;
+            padding: 20px;
+            background: rgba(255, 76, 76, 0.1);
+            border: 1px solid rgba(255, 76, 76, 0.3);
+            border-radius: 12px;
+            color: #ff4c4c;
+            margin-top: 20px;
+        }
+        .error-container i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="loader">
+        <img src="logo.png" alt="تحميل" class="loader-logo">
+        <div class="loader-text">جاري إعداد بيئة الانتقال...</div>
+        <div class="loader-bar"></div>
+    </div>
+
+    <div class="bg-shapes">
+        <div class="shape s1"></div>
+        <div class="shape s2"></div>
+    </div>
+
+    <div class="container">
+        <img src="logo.png" alt="اللوجو" class="main-logo" onerror="this.src='https://via.placeholder.com/130x130/c5a059/ffffff?text=LOGO'">
+        
+        <div class="badge"><i class="fa-solid fa-shield-halved"></i> انتقال آمن وموثق</div>
+        
+        <h1>مرحباً بك،</h1>
+        <div class="user-name" id="userName">جاري المعالجة...</div>
+        
+        <p class="description">لقد تم التحقق من هويتك بنجاح. أنت الآن على وشك الانتقال إلى الرابط المخصص لك عبر بوابتنا الآمنة.</p>
+        
+        <div class="btn-wrapper" id="actionArea">
+            <a href="#" id="redirectBtn" class="btn">
+                <span>اضغط هنا للانتقال</span>
+                <i class="fa-solid fa-arrow-left-long"></i>
+            </a>
+        </div>
+
+        <div class="error-container" id="errorMsg">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            <p><strong>خطأ في الوصول:</strong> يرجى التأكد من مسح رمز الـ QR الخاص بك بشكل صحيح للمتابعة.</p>
+        </div>
+
+        <div class="footer">
+            <div>موقع انتقالي بواسطة المصمم <strong>MAZEN</strong></div>
+            <span>Senior UI/UX & Graphic Designer</span>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // محاكاة شاشة التحميل لإعطاء طابع احترافي (1.5 ثانية)
+            setTimeout(() => {
+                const loader = document.getElementById('loader');
+                loader.style.opacity = '0';
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                }, 800);
+            }, 1500);
+
+            // استخراج البيانات من الرابط
+            const urlParams = new URLSearchParams(window.location.search);
+            const name = urlParams.get('name');
+            const targetUrl = urlParams.get('url');
+
+            // عناصر DOM
+            const userNameElement = document.getElementById('userName');
+            const redirectBtn = document.getElementById('redirectBtn');
+            const errorMsg = document.getElementById('errorMsg');
+            const actionArea = document.getElementById('actionArea');
+
+            // التحقق من وجود المعلمات
+            if (name && targetUrl) {
+                // تأثير كتابة الاسم (Typewriter effect)
+                userNameElement.textContent = '';
+                let i = 0;
+                const typeWriter = () => {
+                    if (i < name.length) {
+                        userNameElement.textContent += name.charAt(i);
+                        i++;
+                        setTimeout(typeWriter, 50);
+                    }
+                };
+                setTimeout(typeWriter, 1600); // يبدأ بعد اختفاء اللودر
+                
+                redirectBtn.href = targetUrl;
+            } else {
+                // حالة الخطأ (الدخول بدون QR)
+                userNameElement.textContent = "زائر غير معروف";
+                actionArea.style.display = "none";
+                errorMsg.style.display = "block";
+            }
+        });
+    </script>
+</body>
+</html>
