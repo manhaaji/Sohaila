@@ -3,414 +3,680 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بوابة الانتقال الآمنة | MAZEN</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700;900&family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <title>دليل رحلة الجامعة البريطانية - BUE</title>
+    <!-- استدعاء خطوط جوجل (Cairo) -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- استدعاء مكتبة FontAwesome للأيقونات -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        /* المتغيرات اللونية */
+        /* ===== المتغيرات والثيم النهاري العصري ===== */
         :root {
-            --primary-gold: #c5a059;
-            --primary-gold-hover: #b08d4b;
-            --bg-color: #f7f9fa;
-            --text-main: #2b2b2b;
-            --text-muted: #6b6b6b;
-            --card-bg: rgba(255, 255, 255, 0.85);
-            --card-border: rgba(197, 160, 89, 0.3);
-            --shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+            --bg-gradient: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --text-dark: #2d3436;
+            --text-light: #636e72;
+            
+            /* ألوان مبهجة واحترافية (برتقالي، بنفسجي، أحمر، أخضر) */
+            --primary-purple: #6c5ce7;
+            --accent-orange: #fdcb6e;
+            --accent-red: #ff7675;
+            --success-green: #00b894;
+            --disabled-color: #dfe6e9;
         }
 
+        /* ===== الإعدادات الأساسية ===== */
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: 'Tajawal', 'Cairo', sans-serif;
-            -webkit-font-smoothing: antialiased;
+            font-family: 'Cairo', sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
+            background: var(--bg-gradient);
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
+            color: var(--text-dark);
+            overflow-x: hidden;
             position: relative;
         }
 
-        /* خلفية متحركة */
-        .bg-shapes {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
+        /* أشكال عصرية في الخلفية كبديل للغيوم والشمس */
+        .bg-shape {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
             z-index: -1;
-            overflow: hidden;
-            background: linear-gradient(135deg, #f7f9fa 0%, #eef1f5 100%);
-        }
-        .shape {
-            position: absolute;
-            filter: blur(60px);
             opacity: 0.6;
-            animation: float 15s infinite alternate ease-in-out;
         }
-        .shape.s1 {
-            width: 400px; height: 400px;
-            background: rgba(197, 160, 89, 0.15);
-            top: -100px; right: -100px;
-        }
-        .shape.s2 {
-            width: 300px; height: 300px;
-            background: rgba(255, 255, 255, 0.8);
-            bottom: -50px; left: -50px;
-            animation-duration: 20s;
+        .shape-1 { width: 300px; height: 300px; background: var(--accent-orange); top: -100px; right: -100px; }
+        .shape-2 { width: 400px; height: 400px; background: var(--primary-purple); bottom: -150px; left: -150px; opacity: 0.4; }
+        .shape-3 { width: 200px; height: 200px; background: var(--accent-red); top: 40%; right: 10%; opacity: 0.3; }
+
+        /* ===== الحاوية الرئيسية ===== */
+        .container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 30px 15px;
+            position: relative;
+            z-index: 10;
         }
 
-        @keyframes float {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(30px, 50px) scale(1.1); }
+        header {
+            text-align: center;
+            margin-bottom: 35px;
+            animation: fade-in-down 1s ease;
         }
 
-        /* شاشة التحميل (Loader) */
-        #loader {
+        header h1 {
+            font-size:clamp(1.8rem, 5vw, 2.5rem);
+            color: var(--primary-purple);
+            margin-bottom: 10px;
+            font-weight: 800;
+        }
+        header p {
+            color: var(--text-light);
+            font-size: clamp(1rem, 3vw, 1.2rem);
+            font-weight: 600;
+        }
+
+        /* ===== أزرار التبديل ===== */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: #fff;
+            border: 2px solid transparent;
+            color: var(--text-light);
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            flex: 1;
+            min-width: 140px;
+            max-width: 200px;
+        }
+
+        .tab-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+        }
+
+        .tab-btn.active {
+            background: var(--primary-purple);
+            color: #fff;
+            box-shadow: 0 8px 20px rgba(108, 92, 231, 0.3);
+        }
+
+        /* ===== مسار الرحلة (Timeline) ===== */
+        .route-container {
+            display: none;
+            animation: fade-in-up 0.8s ease;
+        }
+        .route-container.active { display: block; }
+
+        .timeline {
+            position: relative;
+            padding-right: 35px;
+        }
+
+        /* خط المسار العمودي */
+        .timeline::before {
+            content: '';
+            position: absolute;
+            right: 15px;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: var(--disabled-color);
+            border-radius: 2px;
+        }
+
+        .step {
+            position: relative;
+            margin-bottom: 25px;
+            opacity: 0.5;
+            transform: translateX(15px);
+            transition: all 0.5s ease;
+            pointer-events: none;
+        }
+
+        .step.current {
+            opacity: 1;
+            transform: translateX(0);
+            pointer-events: auto;
+        }
+
+        .step.completed {
+            opacity: 0.9;
+            transform: translateX(0);
+        }
+
+        /* دائرة الخطوة */
+        .step-icon {
+            position: absolute;
+            right: -35px;
+            top: 15px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #fff;
+            color: var(--disabled-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            z-index: 2;
+            border: 3px solid var(--disabled-color);
+            transition: all 0.4s ease;
+        }
+
+        .step.current .step-icon {
+            background: var(--accent-orange);
+            color: #fff;
+            border-color: var(--accent-orange);
+            box-shadow: 0 0 15px rgba(253, 203, 110, 0.5);
+            animation: pulse-icon 1.5s infinite;
+        }
+
+        .step.completed .step-icon {
+            background: var(--success-green);
+            color: #fff;
+            border-color: var(--success-green);
+        }
+
+        /* كارت المعلومات */
+        .step-content {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.04);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,1);
+        }
+
+        .step-content h3 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: var(--primary-purple);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .step-content p {
+            font-size: 0.95rem;
+            line-height: 1.7;
+            color: var(--text-light);
+            margin-bottom: 15px;
+        }
+
+        .info-tags {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            background: rgba(108, 92, 231, 0.1);
+            color: var(--primary-purple);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .alternative {
+            background: rgba(255, 118, 117, 0.1);
+            border-right: 4px solid var(--accent-red);
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-size: 0.85rem;
+            color: #d63031;
+        }
+
+        /* زر "تم" */
+        .done-btn {
+            background: var(--primary-purple);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .done-btn:hover { background: #5a4bcf; }
+
+        .step.completed .done-btn {
+            background: var(--success-green);
+            pointer-events: none;
+        }
+
+        /* رسالة النهاية */
+        .success-message {
+            display: none;
+            text-align: center;
+            background: var(--success-green);
+            color: white;
+            padding: 25px 15px;
+            border-radius: 20px;
+            margin-top: 30px;
+            animation: fade-in-up 0.5s ease;
+            box-shadow: 0 10px 30px rgba(0, 184, 148, 0.3);
+        }
+
+        /* ===== نافذة التثبيت (PWA Popup) ===== */
+        .install-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: #ffffff;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: opacity 0.8s cubic-bezier(0.86, 0, 0.07, 1);
-        }
-        .loader-logo {
-            width: 120px;
-            animation: pulse 1.5s infinite alternate;
-            margin-bottom: 20px;
-        }
-        .loader-text {
-            font-size: 1.2rem;
-            color: var(--primary-gold);
-            font-weight: 700;
-            letter-spacing: 2px;
-        }
-        .loader-bar {
-            width: 200px;
-            height: 3px;
-            background: #eee;
-            margin-top: 15px;
-            border-radius: 5px;
-            overflow: hidden;
-            position: relative;
-        }
-        .loader-bar::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; height: 100%;
-            width: 50%;
-            background: var(--primary-gold);
-            animation: loadingBar 1.5s infinite ease-in-out;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(0.95); opacity: 0.8; }
-            100% { transform: scale(1.05); opacity: 1; }
-        }
-        @keyframes loadingBar {
-            0% { left: -50%; }
-            100% { left: 100%; }
-        }
-
-        /* الحاوية الرئيسية */
-        .container {
-            background: var(--card-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--card-border);
-            border-radius: 24px;
-            padding: 50px 40px;
-            width: 90%;
-            max-width: 500px;
-            text-align: center;
-            box-shadow: var(--shadow);
-            transform: translateY(30px);
-            opacity: 0;
-            animation: fadeInUp 1s 0.5s forwards cubic-bezier(0.25, 0.8, 0.25, 1);
-            position: relative;
-        }
-
-        @keyframes fadeInUp {
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        /* حاوية اللوجو مع لمعة متحركة */
-        .logo-wrapper {
-            position: relative;
-            display: inline-block;
-            margin-bottom: 25px;
-            border-radius: 50%; /* للحفاظ على اللمعة داخل دائرة اللوجو */
-            overflow: hidden;
-            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.05));
-        }
-
-        .main-logo {
-            width: 130px;
-            display: block;
-            border-radius: 50%;
-        }
-
-        /* لمعة اللوجو */
-        .logo-wrapper::after {
-            content: '';
-            position: absolute;
-            top: 0; left: -150%;
-            width: 50%; height: 100%;
-            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.7) 50%, rgba(255,255,255,0) 100%);
-            transform: skewX(-25deg);
-            animation: logoShine 3.5s infinite;
-        }
-
-        @keyframes logoShine {
-            0% { left: -150%; }
-            20% { left: 200%; }
-            100% { left: 200%; } /* تأخير زمني بين كل لمعة */
-        }
-
-        .badge {
-            display: inline-block;
-            background: rgba(197, 160, 89, 0.1);
-            color: var(--primary-gold);
-            padding: 5px 15px;
-            border-radius: 50px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            margin-bottom: 15px;
-            border: 1px solid rgba(197, 160, 89, 0.2);
-        }
-
-        h1 {
-            font-size: 1.5rem;
-            font-weight: 400;
-            margin-bottom: 5px;
-            color: var(--text-muted);
-        }
-
-        .user-name {
-            font-size: 2.2rem;
-            font-weight: 900;
-            color: var(--text-main);
-            margin-bottom: 20px;
-            background: linear-gradient(45deg, #1e1e1e, #6b6b6b);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .description {
-            font-size: 1rem;
-            line-height: 1.6;
-            color: var(--text-muted);
-            margin-bottom: 40px;
-        }
-
-        /* زر الانتقال الاحترافي */
-        .btn-wrapper {
-            position: relative;
-            display: inline-block;
-            width: 100%;
-        }
-
-        .btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            width: 100%;
-            background: linear-gradient(135deg, var(--primary-gold), #e8d08d);
-            color: #fff;
-            text-decoration: none;
-            padding: 18px 30px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            border-radius: 14px;
-            border: none;
-            cursor: pointer;
-            transition: all 0.4s ease;
-            box-shadow: 0 10px 20px rgba(197, 160, 89, 0.3);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%; width: 50%; height: 100%;
-            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
-            transform: skewX(-25deg);
-            transition: all 0.7s ease;
-        }
-
-        .btn:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 25px rgba(197, 160, 89, 0.4);
-        }
-
-        .btn:hover::before {
-            left: 200%;
-        }
-
-        .btn i {
-            font-size: 1.2rem;
-            transition: transform 0.3s ease;
-        }
-
-        .btn:hover i {
-            transform: translateX(-5px);
-        }
-
-        /* الفوتر / لمعة النصوص */
-        .footer {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(0, 0, 0, 0.05);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-        }
-
-        /* لمعة الفضة للنص العادي */
-        .shimmer-text {
-            font-size: 0.85rem;
-            background: linear-gradient(90deg, var(--text-muted) 0%, #333 20%, var(--text-muted) 40%, var(--text-muted) 100%);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: textShine 3.5s linear infinite;
-        }
-
-        /* لمعة الذهب لاسم MAZEN */
-        .shimmer-gold {
-            font-size: 0.95rem;
-            font-weight: 900;
-            letter-spacing: 1px;
-            background: linear-gradient(90deg, var(--primary-gold) 0%, #fff 20%, var(--primary-gold) 40%, var(--primary-gold) 100%);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: textShine 3.5s linear infinite;
-        }
-
-        /* لمعة المسمى الوظيفي */
-        .shimmer-sub {
-            font-size: 0.75rem;
-            background: linear-gradient(90deg, var(--text-muted) 0%, #222 20%, var(--text-muted) 40%, var(--text-muted) 100%);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: textShine 3.5s linear infinite;
-            opacity: 0.8;
-        }
-
-        @keyframes textShine {
-            to { background-position: -200% center; }
-        }
-
-        /* رسائل الأخطاء */
-        .error-container {
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+            z-index: 999;
             display: none;
-            padding: 20px;
-            background: rgba(255, 76, 76, 0.1);
-            border: 1px solid rgba(255, 76, 76, 0.3);
-            border-radius: 12px;
-            color: #ff4c4c;
-            margin-top: 20px;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.4s ease;
         }
-        .error-container i {
-            font-size: 2rem;
+
+        .install-overlay.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .install-modal {
+            background: #fff;
+            width: 90%;
+            max-width: 350px;
+            padding: 25px;
+            border-radius: 25px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            transform: translateY(50px);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .install-overlay.show .install-modal {
+            transform: translateY(0);
+        }
+
+        .install-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--primary-purple);
+            color: #fff;
+            font-size: 1.8rem;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            box-shadow: 0 10px 20px rgba(108, 92, 231, 0.3);
+        }
+
+        .install-modal h3 {
+            font-size: 1.3rem;
+            color: var(--text-dark);
             margin-bottom: 10px;
         }
 
+        .install-modal p {
+            font-size: 0.95rem;
+            color: var(--text-light);
+            margin-bottom: 20px;
+        }
+
+        .install-btns {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .btn-install {
+            background: var(--primary-purple);
+            color: #fff;
+            border: none;
+            padding: 12px;
+            border-radius: 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-cancel {
+            background: transparent;
+            color: var(--text-light);
+            border: none;
+            padding: 10px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        /* ===== الحركات (Keyframes) ===== */
+        @keyframes fade-in-down {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fade-in-up {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse-icon {
+            0% { box-shadow: 0 0 0 0 rgba(253, 203, 110, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(253, 203, 110, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(253, 203, 110, 0); }
+        }
+        
+        /* توافق الشاشات الأكبر */
+        @media (min-width: 600px) {
+            .done-btn { width: auto; }
+            .step-content { padding: 25px; }
+        }
     </style>
 </head>
 <body>
 
-    <div id="loader">
-        <img src="logo.png" alt="تحميل" class="loader-logo">
-        <div class="loader-text">جاري إعداد بيئة الانتقال...</div>
-        <div class="loader-bar"></div>
-    </div>
-
-    <div class="bg-shapes">
-        <div class="shape s1"></div>
-        <div class="shape s2"></div>
-    </div>
+    <!-- أشكال عصرية للخلفية -->
+    <div class="bg-shape shape-1"></div>
+    <div class="bg-shape shape-2"></div>
+    <div class="bg-shape shape-3"></div>
 
     <div class="container">
-        <div class="logo-wrapper">
-            <img src="logo.png" alt="اللوجو" class="main-logo" onerror="this.src='https://via.placeholder.com/130x130/c5a059/ffffff?text=LOGO'">
-        </div>
-        
-        <div class="badge"><i class="fa-solid fa-shield-halved"></i> انتقال آمن وموثق</div>
-        
-        <h1>مرحباً بك،</h1>
-        <div class="user-name" id="userName">جاري المعالجة...</div>
-        
-        <p class="description">لقد تم التحقق من هويتك بنجاح. أنت الآن على وشك الانتقال إلى الرابط المخصص لك عبر بوابتنا الآمنة.</p>
-        
-        <div class="btn-wrapper" id="actionArea">
-            <a href="#" id="redirectBtn" class="btn">
-                <span>اضغط هنا للانتقال</span>
-                <i class="fa-solid fa-arrow-left-long"></i>
-            </a>
+        <header>
+            <h1><i class="fa-solid fa-route"></i> خريطة الوصول للجامعة</h1>
+            <p>دليلك خطوة بخطوة من الخطاطبة إلى BUE</p>
+        </header>
+
+        <!-- أزرار الاختيار -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchRoute('going')">
+                <i class="fa-solid fa-graduation-cap"></i> طريق الذهاب
+            </button>
+            <button class="tab-btn" onclick="switchRoute('returning')">
+                <i class="fa-solid fa-house"></i> طريق الرجوع
+            </button>
         </div>
 
-        <div class="error-container" id="errorMsg">
-            <i class="fa-solid fa-circle-exclamation"></i>
-            <p><strong>خطأ في الوصول:</strong> يرجى التأكد من مسح رمز الـ QR الخاص بك بشكل صحيح للمتابعة.</p>
+        <!-- ======================= طريق الذهاب ======================= -->
+        <div id="going-route" class="route-container active">
+            <div class="timeline">
+                
+                <div class="step current" id="g-step-1">
+                    <div class="step-icon"><i class="fa-solid fa-train"></i></div>
+                    <div class="step-content">
+                        <h3>1. البداية: قطار الخطاطبة</h3>
+                        <p>اركب القطار من محطة الخطاطبة وانزل في <strong>محطة الكوم الأحمر</strong> (محطة مترو الدائري).</p>
+                        <button class="done-btn" onclick="markDone('g-step-1', 'g-step-2')">
+                            تم <i class="fa-solid fa-check"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="step" id="g-step-2">
+                    <div class="step-icon"><i class="fa-solid fa-train-subway"></i></div>
+                    <div class="step-content">
+                        <h3>2. مترو الخط الثالث (الدائري)</h3>
+                        <p>اركب المترو اتجاه <strong>محطة عدلي منصور</strong> (الخط الأخضر). مسار مباشر بدون تحويلات.</p>
+                        <div class="info-tags">
+                            <span class="tag"><i class="fa-solid fa-ticket"></i> 20 جنيه</span>
+                            <span class="tag"><i class="fa-solid fa-clock"></i> ساعة تقريباً</span>
+                        </div>
+                        <button class="done-btn" onclick="markDone('g-step-2', 'g-step-3')">
+                            تم <i class="fa-solid fa-check"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="step" id="g-step-3">
+                    <div class="step-icon"><i class="fa-solid fa-walking"></i></div>
+                    <div class="step-content">
+                        <h3>3. الوصول لعدلي منصور</h3>
+                        <p>بمجرد النزول، اتبع اللوحات الإرشادية لـ <strong>رصيف القطار الكهربائي (LRT)</strong> داخل نفس المحطة.</p>
+                        <div class="alternative">
+                            <strong><i class="fa-solid fa-bolt"></i> طريقة بديلة:</strong> 
+                            ممكن تخرج لموقف السلام وتركب ميكروباص للشروق يمر من أمام الجامعة.
+                        </div>
+                        <button class="done-btn" onclick="markDone('g-step-3', 'g-step-4')">
+                            تم <i class="fa-solid fa-check"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="step" id="g-step-4">
+                    <div class="step-icon"><i class="fa-solid fa-train-tram"></i></div>
+                    <div class="step-content">
+                        <h3>4. القطار الكهربائي (LRT)</h3>
+                        <p>اركب القطار اتجاه العاصمة الإدارية، وانزل في <strong>محطة الشروق</strong>.</p>
+                        <div class="info-tags">
+                            <span class="tag"><i class="fa-solid fa-ticket"></i> 10 جنيه</span>
+                            <span class="tag"><i class="fa-solid fa-clock"></i> 10 دقايق</span>
+                        </div>
+                        <button class="done-btn" onclick="markDone('g-step-4', 'g-step-5')">
+                            تم <i class="fa-solid fa-check"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="step" id="g-step-5">
+                    <div class="step-icon"><i class="fa-solid fa-bus"></i></div>
+                    <div class="step-content">
+                        <h3>5. الوصول للجامعة 🎓</h3>
+                        <p>من محطة الشروق، اركب باصات المتميز أو ميكروباص واطلب النزول أمام الجامعة البريطانية.</p>
+                        <button class="done-btn" onclick="finishRoute('going-success')">
+                            وصلت بالسلامة <i class="fa-solid fa-flag-checkered"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+            
+            <div id="going-success" class="success-message">
+                <h2>🎉 حمدلله على السلامة!</h2>
+                <p>يوم دراسي موفق ومليء بالإنجازات.</p>
+            </div>
         </div>
 
-        <div class="footer">
-            <div class="shimmer-text">موقع انتقالي بواسطة المصمم <span class="shimmer-gold">MAZEN</span></div>
-            <span class="shimmer-sub">Senior UI/UX & Graphic Designer</span>
+        <!-- ======================= طريق الرجوع ======================= -->
+        <div id="returning-route" class="route-container">
+            <div class="timeline">
+                
+                <div class="step current" id="r-step-1">
+                    <div class="step-icon"><i class="fa-solid fa-bus"></i></div>
+                    <div class="step-content">
+                        <h3>1. من الجامعة لمحطة الشروق</h3>
+                        <p>من أمام الجامعة، اركب أي باص متجه إلى <strong>محطة الشروق للقطار الكهربائي</strong>.</p>
+                        <button class="done-btn" onclick="markDone('r-step-1', 'r-step-2')">
+                            تم <i class="fa-solid fa-check"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="step" id="r-step-2">
+                    <div class="step-icon"><i class="fa-solid fa-train-tram"></i></div>
+                    <div class="step-content">
+                        <h3>2. القطار الكهربائي (LRT)</h3>
+                        <p>اركب القطار الكهربائي في اتجاه <strong>عدلي منصور</strong>.</p>
+                        <button class="done-btn" onclick="markDone('r-step-2', 'r-step-3')">
+                            تم <i class="fa-solid fa-check"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="step" id="r-step-3">
+                    <div class="step-icon"><i class="fa-solid fa-walking"></i></div>
+                    <div class="step-content">
+                        <h3>3. التبديل في عدلي منصور</h3>
+                        <p>امشِ داخل المحطة وتوجه إلى <strong>رصيف مترو الخط الثالث</strong> (الأخضر).</p>
+                        <button class="done-btn" onclick="markDone('r-step-3', 'r-step-4')">
+                            تم <i class="fa-solid fa-check"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="step" id="r-step-4">
+                    <div class="step-icon"><i class="fa-solid fa-train-subway"></i></div>
+                    <div class="step-content">
+                        <h3>4. المترو لمحطة الدائري</h3>
+                        <p>اركب المترو (اتجاه محور روض الفرج) وانزل في <strong>محطة الدائري (الكوم الأحمر)</strong>.</p>
+                        <button class="done-btn" onclick="markDone('r-step-4', 'r-step-5')">
+                            تم <i class="fa-solid fa-check"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="step" id="r-step-5">
+                    <div class="step-icon"><i class="fa-solid fa-train"></i></div>
+                    <div class="step-content">
+                        <h3>5. العودة: قطار الخطاطبة 🏡</h3>
+                        <p>من محطة الكوم الأحمر، اركب القطار المتجه للعودة إلى <strong>الخطاطبة</strong>.</p>
+                        <button class="done-btn" onclick="finishRoute('returning-success')">
+                            تم الوصول للبيت <i class="fa-solid fa-house-chimney"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <div id="returning-success" class="success-message">
+                <h2>🎉 حمدلله على السلامة!</h2>
+                <p>رحلة طويلة، وقت الراحة الآن.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- نافذة التثبيت (Popup) -->
+    <div id="installOverlay" class="install-overlay">
+        <div class="install-modal">
+            <div class="install-icon">
+                <i class="fa-solid fa-mobile-screen"></i>
+            </div>
+            <h3>تثبيت الدليل على هاتفك؟</h3>
+            <p>قم بتثبيت التطبيق للوصول السريع للمسار في أي وقت وبدون إنترنت.</p>
+            <div class="install-btns">
+                <button class="btn-install" onclick="installApp()">تثبيت الآن</button>
+                <button class="btn-cancel" onclick="closeInstallModal()">ليس الآن</button>
+            </div>
         </div>
     </div>
 
+    <!-- ===== كود الجافا سكريبت ===== -->
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            setTimeout(() => {
-                const loader = document.getElementById('loader');
-                loader.style.opacity = '0';
-                setTimeout(() => {
-                    loader.style.display = 'none';
-                }, 800);
-            }, 1500);
+        // التبديل بين المسارات
+        function switchRoute(route) {
+            document.getElementById('going-route').classList.remove('active');
+            document.getElementById('returning-route').classList.remove('active');
+            
+            let tabs = document.querySelectorAll('.tab-btn');
+            tabs.forEach(tab => tab.classList.remove('active'));
 
-            const urlParams = new URLSearchParams(window.location.search);
-            const name = urlParams.get('name');
-            const targetUrl = urlParams.get('url');
-
-            const userNameElement = document.getElementById('userName');
-            const redirectBtn = document.getElementById('redirectBtn');
-            const errorMsg = document.getElementById('errorMsg');
-            const actionArea = document.getElementById('actionArea');
-
-            if (name && targetUrl) {
-                userNameElement.textContent = '';
-                let i = 0;
-                const typeWriter = () => {
-                    if (i < name.length) {
-                        userNameElement.textContent += name.charAt(i);
-                        i++;
-                        setTimeout(typeWriter, 50);
-                    }
-                };
-                setTimeout(typeWriter, 1600); 
-                
-                redirectBtn.href = targetUrl;
+            if (route === 'going') {
+                document.getElementById('going-route').classList.add('active');
+                tabs[0].classList.add('active');
             } else {
-                userNameElement.textContent = "زائر غير معروف";
-                actionArea.style.display = "none";
-                errorMsg.style.display = "block";
+                document.getElementById('returning-route').classList.add('active');
+                tabs[1].classList.add('active');
             }
+        }
+
+        // تفعيل الخطوات
+        function markDone(currentStepId, nextStepId) {
+            let currentStep = document.getElementById(currentStepId);
+            let nextStep = document.getElementById(nextStepId);
+            let btn = currentStep.querySelector('.done-btn');
+
+            currentStep.classList.remove('current');
+            currentStep.classList.add('completed');
+            btn.innerHTML = 'اكتملت <i class="fa-solid fa-check-double"></i>';
+
+            if (nextStep) {
+                nextStep.classList.add('current');
+                setTimeout(() => {
+                    nextStep.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 300);
+            }
+        }
+
+        // إنهاء الرحلة
+        function finishRoute(successMsgId) {
+            let msg = document.getElementById(successMsgId);
+            msg.style.display = 'block';
+            setTimeout(() => {
+                msg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        }
+
+        /* ===== منطق ظهور نافذة التثبيت ===== */
+        let deferredPrompt;
+        
+        // التقاط حدث التثبيت النيتف من المتصفح
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
         });
+
+        // إظهار النافذة بعد 5 ثواني
+        setTimeout(() => {
+            let isDismissed = localStorage.getItem('installDismissed');
+            // التأكد أن المستخدم لم يقم برفضها مسبقاً
+            if (!isDismissed) {
+                let overlay = document.getElementById('installOverlay');
+                overlay.style.display = 'flex';
+                // تفعيل الأنيميشن
+                setTimeout(() => {
+                    overlay.classList.add('show');
+                }, 50);
+            }
+        }, 5000);
+
+        function installApp() {
+            if (deferredPrompt) {
+                // إظهار نافذة التثبيت الأصلية الخاصة بالمتصفح
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('User accepted the install prompt');
+                    }
+                    deferredPrompt = null;
+                });
+            } else {
+                // في حالة أن المتصفح لا يدعم أو لم يتم تجهيز ملف manifest.json
+                alert('لتثبيت التطبيق، اضغط على إعدادات المتصفح (الثلاث نقاط) واختر "إضافة إلى الشاشة الرئيسية" (Add to Home Screen).');
+            }
+            closeInstallModal();
+        }
+
+        function closeInstallModal() {
+            let overlay = document.getElementById('installOverlay');
+            overlay.classList.remove('show');
+            setTimeout(() => {
+                overlay.style.display = 'none';
+            }, 400);
+            
+            // حفظ اختيار المستخدم حتى لا تظهر له النافذة كل مرة
+            localStorage.setItem('installDismissed', 'true');
+        }
     </script>
 </body>
 </html>
