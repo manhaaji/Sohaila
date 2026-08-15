@@ -17,7 +17,7 @@
             --text-dark: #2d3436;
             --text-light: #636e72;
             
-            /* ألوان مبهجة واحترافية (برتقالي، بنفسجي، أحمر، أخضر) */
+            /* ألوان مبهجة واحترافية */
             --primary-purple: #6c5ce7;
             --accent-orange: #fdcb6e;
             --accent-red: #ff7675;
@@ -42,7 +42,7 @@
             position: relative;
         }
 
-        /* أشكال عصرية في الخلفية كبديل للغيوم والشمس */
+        /* أشكال عصرية في الخلفية */
         .bg-shape {
             position: fixed;
             border-radius: 50%;
@@ -247,6 +247,41 @@
             color: #d63031;
         }
 
+        /* أزرار اختيار الطريق */
+        .path-btns {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .path-btn {
+            padding: 12px;
+            border-radius: 15px;
+            border: 2px solid;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: #fff;
+        }
+
+        .lrt-btn {
+            color: var(--primary-purple);
+            border-color: var(--primary-purple);
+        }
+        .lrt-btn:hover { background: var(--primary-purple); color: #fff; }
+
+        .bus-btn {
+            color: var(--accent-orange);
+            border-color: var(--accent-orange);
+        }
+        .bus-btn:hover { background: var(--accent-orange); color: #fff; }
+
         /* زر "تم" */
         .done-btn {
             background: var(--primary-purple);
@@ -388,10 +423,11 @@
             100% { box-shadow: 0 0 0 0 rgba(253, 203, 110, 0); }
         }
         
-        /* توافق الشاشات الأكبر */
         @media (min-width: 600px) {
             .done-btn { width: auto; }
             .step-content { padding: 25px; }
+            .path-btns { flex-direction: row; }
+            .path-btn { flex: 1; }
         }
     </style>
 </head>
@@ -404,8 +440,8 @@
 
     <div class="container">
         <header>
-            <h1><i class="fa-solid fa-route"></i> خريطة الوصول للجامعة</h1>
-           
+            <h1><i class="fa-solid fa-route"></i> خريطة السكة للجامعة</h1>
+            
         </header>
 
         <!-- أزرار الاختيار -->
@@ -426,7 +462,7 @@
                     <div class="step-icon"><i class="fa-solid fa-train"></i></div>
                     <div class="step-content">
                         <h3>1. البداية: قطار الخطاطبة</h3>
-                        <p>اركبيي القطار من محطة الخطاطبة وانزلي في <strong>محطة الكوم الأحمر</strong> (محطة مترو الدائري).</p>
+                        <p>اركبي القطر من محطة الخطاطبة وانزلي في <strong>محطة الكوم الأحمر</strong> (اللي هي محطة الدائري).</p>
                         <button class="done-btn" onclick="markDone('g-step-1', 'g-step-2')">
                             تم <i class="fa-solid fa-check"></i>
                         </button>
@@ -436,11 +472,11 @@
                 <div class="step" id="g-step-2">
                     <div class="step-icon"><i class="fa-solid fa-train-subway"></i></div>
                     <div class="step-content">
-                        <h3>2. مترو الخط الثالث (الدائري)</h3>
-                        <p>اركبيي المترو اتجاه <strong>محطة عدلي منصور</strong> (الخط الأخضر). مسار مباشر بدون تحويلات.</p>
+                        <h3>2. مترو الخط الثالث (الخط الأخضر)</h3>
+                        <p>اركبي المترو في اتجاه <strong>محطة عدلي منصور</strong>. الخط ده مباشر ومش هتحتاجي تبدلي في أي محطة في السكة.</p>
                         <div class="info-tags">
                             <span class="tag"><i class="fa-solid fa-ticket"></i> 20 جنيه</span>
-                            <span class="tag"><i class="fa-solid fa-clock"></i> ساعة تقريباً</span>
+                            <span class="tag"><i class="fa-solid fa-clock"></i> ساعة وربع تقريباً</span>
                         </div>
                         <button class="done-btn" onclick="markDone('g-step-2', 'g-step-3')">
                             تم <i class="fa-solid fa-check"></i>
@@ -449,40 +485,79 @@
                 </div>
 
                 <div class="step" id="g-step-3">
-                    <div class="step-icon"><i class="fa-solid fa-walking"></i></div>
+                    <div class="step-icon"><i class="fa-solid fa-code-branch"></i></div>
                     <div class="step-content">
-                        <h3>3. الوصول لعدلي منصور</h3>
-                        <p>بمجرد النزول، اتبع اللوحات الإرشادية لـ <strong>رصيف القطار الكهربائي (LRT)</strong> داخل نفس المحطة.</p>
-                        <div class="alternative">
-                            <strong><i class="fa-solid fa-bolt"></i> طريقة بديلة:</strong> 
-                            ممكن تخرج لموقف السلام وتركب ميكروباص للشروق يمر من أمام الجامعة.
+                        <h3>3. الوصول لعدلي منصور (اختاري طريقك)</h3>
+                        <p>أول ما تنزلي من المترو، قدامك طريقين، اختاري اللي يريحك:</p>
+                        <div class="path-btns">
+                            <button class="path-btn lrt-btn" onclick="choosePath('lrt')">
+                                <i class="fa-solid fa-train-tram"></i> هكمل بالقطار الكهربائي
+                            </button>
+                            <button class="path-btn bus-btn" onclick="choosePath('bus')">
+                                <i class="fa-solid fa-van-shuttle"></i> هطلع أركب ميكروباص (موقف السلام)
+                            </button>
                         </div>
-                        <button class="done-btn" onclick="markDone('g-step-3', 'g-step-4')">
-                            تم <i class="fa-solid fa-check"></i>
-                        </button>
                     </div>
                 </div>
 
-                <div class="step" id="g-step-4">
+                <!-- مسار القطار الكهربائي (طريق الذهاب) -->
+                <div class="step lrt-step" id="g-step-4-lrt" style="display: none;">
                     <div class="step-icon"><i class="fa-solid fa-train-tram"></i></div>
                     <div class="step-content">
                         <h3>4. القطار الكهربائي (LRT)</h3>
-                        <p>اركبي القطار اتجاه العاصمة الإدارية، وانزل في <strong>محطة الشروق</strong>.</p>
+                        <p>امشي مع اليافطات واركبي القطار الكهربائي اتجاه العاصمة الإدارية، وانزلي في <strong>محطة الشروق</strong>.</p>
                         <div class="info-tags">
                             <span class="tag"><i class="fa-solid fa-ticket"></i> 10 جنيه</span>
                             <span class="tag"><i class="fa-solid fa-clock"></i> 10 دقايق</span>
                         </div>
-                        <button class="done-btn" onclick="markDone('g-step-4', 'g-step-5')">
+                        <button class="done-btn" onclick="markDone('g-step-4-lrt', 'g-step-5-lrt')">
                             تم <i class="fa-solid fa-check"></i>
                         </button>
                     </div>
                 </div>
 
-                <div class="step" id="g-step-5">
+                <div class="step lrt-step" id="g-step-5-lrt" style="display: none;">
                     <div class="step-icon"><i class="fa-solid fa-bus"></i></div>
                     <div class="step-content">
                         <h3>5. الوصول للجامعة 🎓</h3>
-                        <p>من محطة الشروق، اركبي باصات المتميز أو ميكروباص واطلبيي النزول أمام الجامعة البريطانية.</p>
+                        <p>من محطة الشروق، اركبي باص المتميز أو ميكروباص، واطلبي منه ينزلك قدام باب الجامعة البريطانية.</p>
+                        <button class="done-btn" onclick="finishRoute('going-success')">
+                            وصلت بالسلامة <i class="fa-solid fa-flag-checkered"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- مسار ميكروباص السلام (طريق الذهاب) -->
+                <div class="step bus-step" id="g-step-4-bus" style="display: none;">
+                    <div class="step-icon"><i class="fa-solid fa-van-shuttle"></i></div>
+                    <div class="step-content">
+                        <h3>4. ميكروباص السلام (سؤال مهم!)</h3>
+                        <p>اطلعي لموقف السلام واركبي ميكروباص الشروق. <strong>الأهم قبل ما تركبي</strong> تسألي السواق: "بتدخل الشروق من جوه وبتعدي على الجامعة البريطانية؟" عشان في عربيات بتنزل على أول الطريق من بره، فالأحسن تركبي اللي بيدخل عشان تريحي دماغك.</p>
+                        <button class="done-btn" onclick="markDone('g-step-4-bus', 'g-step-5-bus')">
+                            ركبت <i class="fa-solid fa-check"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="step bus-step" id="g-step-5-bus" style="display: none;">
+                    <div class="step-icon"><i class="fa-solid fa-route"></i></div>
+                    <div class="step-content">
+                        <h3>5. الطريق هيمشي إزاي؟</h3>
+                        <p>الميكروباص هيطلع من موقف السلام ويمسك طريق الإسماعيلية الصحراوي. هيعدي على (سوق العبور، مدينة العبور، مدينة المستقبل)، وبعد كده هيدخل يمين من بوابة مدينة الشروق.</p>
+                        <div class="info-tags">
+                            <span class="tag"><i class="fa-solid fa-clock"></i> من نص ساعة لـ 40 دقيقة تقريباً (حسب الزحمة)</span>
+                        </div>
+                        <button class="done-btn" onclick="markDone('g-step-5-bus', 'g-step-6-bus')">
+                            تم <i class="fa-solid fa-check"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="step bus-step" id="g-step-6-bus" style="display: none;">
+                    <div class="step-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                    <div class="step-content">
+                        <h3>6. لو منزلكيش قدام الجامعة؟ (خطة بديلة)</h3>
+                        <p>لو لأي سبب ركبتي ميكروباص بينزل على مدخل الشروق من بره، مفيش أي مشكلة خالص. أول ما تنزلي عند بوابة الشروق هتلاقي عربيات (سوزوكي أو ميكروباصات داخلية)، اركبي وقولي للسواق "الجامعة البريطانية" هينزلك قدام الباب بالظبط.</p>
                         <button class="done-btn" onclick="finishRoute('going-success')">
                             وصلت بالسلامة <i class="fa-solid fa-flag-checkered"></i>
                         </button>
@@ -492,7 +567,7 @@
             </div>
             
             <div id="going-success" class="success-message">
-                <h2>🎉 حمدلله على السلامة!</h2>
+                <h2>🎉 حمدالله على السلامه</h2>
                 <p>❤️❤️❤️ </p>
             </div>
         </div>
@@ -502,54 +577,108 @@
             <div class="timeline">
                 
                 <div class="step current" id="r-step-1">
+                    <div class="step-icon"><i class="fa-solid fa-code-branch"></i></div>
+                    <div class="step-content">
+                        <h3>1. طريق الرجوع من الجامعة (اختاري طريقك)</h3>
+                        <p>قدامك طريقين عشان توصلي لمحطة عدلي منصور، اختاري اللي يريحك:</p>
+                        <div class="path-btns">
+                            <button class="path-btn lrt-btn" onclick="chooseReturnPath('lrt')">
+                                <i class="fa-solid fa-train-tram"></i> هرجع بالقطار الكهربائي
+                            </button>
+                            <button class="path-btn bus-btn" onclick="chooseReturnPath('bus')">
+                                <i class="fa-solid fa-van-shuttle"></i> هرجع بميكروباص ومواصلات
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- مسار القطار الكهربائي (طريق الرجوع) -->
+                <div class="step lrt-step-ret" id="r-step-2-lrt" style="display: none;">
                     <div class="step-icon"><i class="fa-solid fa-bus"></i></div>
                     <div class="step-content">
-                        <h3>1. من الجامعة لمحطة الشروق</h3>
-                        <p>من أمام الجامعة، اركبي أي باص متجه إلى <strong>محطة الشروق للقطار الكهربائي</strong>.</p>
-                        <button class="done-btn" onclick="markDone('r-step-1', 'r-step-2')">
+                        <h3>2. من الجامعة لمحطة الشروق</h3>
+                        <p>من قدام باب الجامعة، اركبي أي باص رايح <strong>محطة الشروق للقطار الكهربائي</strong>.</p>
+                        <button class="done-btn" onclick="markDone('r-step-2-lrt', 'r-step-3-lrt')">
                             تم <i class="fa-solid fa-check"></i>
                         </button>
                     </div>
                 </div>
 
-                <div class="step" id="r-step-2">
+                <div class="step lrt-step-ret" id="r-step-3-lrt" style="display: none;">
                     <div class="step-icon"><i class="fa-solid fa-train-tram"></i></div>
                     <div class="step-content">
-                        <h3>2. القطار الكهربائي (LRT)</h3>
-                        <p>اركبي القطار الكهربائي في اتجاه <strong>عدلي منصور</strong>.</p>
-                        <button class="done-btn" onclick="markDone('r-step-2', 'r-step-3')">
+                        <h3>3. القطار الكهربائي (LRT)</h3>
+                        <p>اركبي القطار الكهربائي في اتجاه محطة <strong>عدلي منصور</strong>.</p>
+                        <button class="done-btn" onclick="markDone('r-step-3-lrt', 'r-step-4-lrt')">
                             تم <i class="fa-solid fa-check"></i>
                         </button>
                     </div>
                 </div>
 
-                <div class="step" id="r-step-3">
-                    <div class="step-icon"><i class="fa-solid fa-walking"></i></div>
-                    <div class="step-content">
-                        <h3>3. التبديل في عدلي منصور</h3>
-                        <p>امشِ داخل المحطة وتوجه إلى <strong>رصيف مترو الخط الثالث</strong> (الأخضر).</p>
-                        <button class="done-btn" onclick="markDone('r-step-3', 'r-step-4')">
-                            تم <i class="fa-solid fa-check"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="step" id="r-step-4">
+                <div class="step lrt-step-ret" id="r-step-4-lrt" style="display: none;">
                     <div class="step-icon"><i class="fa-solid fa-train-subway"></i></div>
                     <div class="step-content">
-                        <h3>4. المترو لمحطة الدائري</h3>
-                        <p>اركبي المترو (اتجاه محور روض الفرج) وانزل في <strong>محطة الدائري (الكوم الأحمر)</strong>.</p>
-                        <button class="done-btn" onclick="markDone('r-step-4', 'r-step-5')">
+                        <h3>4. ركوب المترو (عدلي منصور)</h3>
+                        <p>أول ما تنزلي، ادخلي مجمع عدلي منصور واركبي مترو الخط الثالث (اتجاه جامعة القاهرة أو محور روض الفرج) واقطعي تذكرة بـ 20 جنيه، وانزلي محطة <strong>الدائري (الكوم الأحمر)</strong>.</p>
+                        <button class="done-btn" onclick="markDone('r-step-4-lrt', 'r-step-5-lrt')">
                             تم <i class="fa-solid fa-check"></i>
                         </button>
                     </div>
                 </div>
 
-                <div class="step" id="r-step-5">
+                <div class="step lrt-step-ret" id="r-step-5-lrt" style="display: none;">
                     <div class="step-icon"><i class="fa-solid fa-train"></i></div>
                     <div class="step-content">
                         <h3>5. العودة: قطار الخطاطبة 🏡</h3>
-                        <p>من محطة الكوم الأحمر، اركبي القطار المتجه للعودة إلى <strong>الخطاطبة</strong>.</p>
+                        <p>من محطة الكوم الأحمر، اركبي القطر اللي راجع <strong>الخطاطبة</strong>. توصلوا بالسلامة يا رب!</p>
+                        <button class="done-btn" onclick="finishRoute('returning-success')">
+                            تم الوصول للبيت <i class="fa-solid fa-house-chimney"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- مسار الميكروباص والمواصلات (طريق الرجوع) -->
+                <div class="step bus-step-ret" id="r-step-2-bus" style="display: none;">
+                    <div class="step-icon"><i class="fa-solid fa-van-shuttle"></i></div>
+                    <div class="step-content">
+                        <h3>2. ميكروباص مباشر من الجامعة</h3>
+                        <p>من قدام الجامعة: اسألي على ميكروباص طالع "السلام" أو "موقف العاشر" مباشر من جوه الشروق. لو لقيتي، اركبي وقولي للسواق ينزلك <strong>محطة عدلي منصور</strong>.</p>
+                        <button class="done-btn" onclick="markDone('r-step-2-bus', 'r-step-3-bus')">
+                            تم <i class="fa-solid fa-check"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="step bus-step-ret" id="r-step-3-bus" style="display: none;">
+                    <div class="step-icon"><i class="fa-solid fa-arrow-right-arrow-left"></i></div>
+                    <div class="step-content">
+                        <h3>3. لو ملقتيش ميكروباص مباشر؟ (من البوابة)</h3>
+                        <p>اركبي أي عربية سوزوكي أو ميكروباص داخلي من قدام الجامعة وقوليله ينزلك "بوابة الشروق اللي على طريق الإسماعيلية". أول ما تخرجي البوابة، اقفي على الطريق واركبي أي ميكروباص رايح "السلام" أو "موقف العاشر"، كلها هتعدي على عدلي منصور (أكدي على السواق ينزلك قدام المحطة).</p>
+                        <div class="info-tags">
+                            <span class="tag"><i class="fa-solid fa-clock"></i> المشوار من 30 لـ 40 دقيقة تقريباً</span>
+                        </div>
+                        <button class="done-btn" onclick="markDone('r-step-3-bus', 'r-step-4-bus')">
+                            تم <i class="fa-solid fa-check"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="step bus-step-ret" id="r-step-4-bus" style="display: none;">
+                    <div class="step-icon"><i class="fa-solid fa-train-subway"></i></div>
+                    <div class="step-content">
+                        <h3>4. ركوب المترو (عدلي منصور)</h3>
+                        <p>أول ما تنزلي، ادخلي مجمع عدلي منصور واركبي مترو الخط الثالث (اتجاه جامعة القاهرة أو محور روض الفرج) واقطعي تذكرة بـ 20 جنيه، وانزلي محطة <strong>الدائري (الكوم الأحمر)</strong>.</p>
+                        <button class="done-btn" onclick="markDone('r-step-4-bus', 'r-step-5-bus')">
+                            تم <i class="fa-solid fa-check"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="step bus-step-ret" id="r-step-5-bus" style="display: none;">
+                    <div class="step-icon"><i class="fa-solid fa-train"></i></div>
+                    <div class="step-content">
+                        <h3>5. العودة: قطار الخطاطبة 🏡</h3>
+                        <p>من محطة الكوم الأحمر، اركبي القطر اللي راجع <strong>الخطاطبة</strong>. توصلوا بالسلامة يا رب!</p>
                         <button class="done-btn" onclick="finishRoute('returning-success')">
                             تم الوصول للبيت <i class="fa-solid fa-house-chimney"></i>
                         </button>
@@ -560,7 +689,7 @@
 
             <div id="returning-success" class="success-message">
                 <h2>🎉 حمدلله على السلامة!</h2>
-                <p>رحلة طويلة، وقت الراحة الآن.</p>
+                <p>Strong Woman 🙂😂</p>
             </div>
         </div>
 
@@ -572,18 +701,18 @@
             <div class="install-icon">
                 <i class="fa-solid fa-mobile-screen"></i>
             </div>
-            <h3>تثبيت الدليل على هاتفك؟</h3>
-            <p>قم بتثبيت التطبيق للوصول السريع للمسار في أي وقت وبدون إنترنت.</p>
+            <h3>تنزلي الخريطة على الموبايل؟</h3>
+            <p>نزليها عشان تقدري تفتحيها بسرعة في أي وقت في السكة من غير ما تحتاجي نت.</p>
             <div class="install-btns">
-                <button class="btn-install" onclick="installApp()">تثبيت الآن</button>
-                <button class="btn-cancel" onclick="closeInstallModal()">ليس الآن</button>
+                <button class="btn-install" onclick="installApp()">تنزيل دلوقتي</button>
+                <button class="btn-cancel" onclick="closeInstallModal()">مش دلوقتي</button>
             </div>
         </div>
     </div>
 
     <!-- ===== كود الجافا سكريبت ===== -->
     <script>
-        // التبديل بين المسارات
+        // التبديل بين المسارات (ذهاب وعودة)
         function switchRoute(route) {
             document.getElementById('going-route').classList.remove('active');
             document.getElementById('returning-route').classList.remove('active');
@@ -600,6 +729,54 @@
             }
         }
 
+        // اختيار مسار عدلي منصور (طريق الذهاب)
+        function choosePath(pathType) {
+            let step3 = document.getElementById('g-step-3');
+            step3.classList.remove('current');
+            step3.classList.add('completed');
+            
+            step3.querySelector('.path-btns').style.opacity = '0.6';
+            step3.querySelector('.path-btns').style.pointerEvents = 'none';
+
+            if(pathType === 'lrt') {
+                document.querySelectorAll('.lrt-step').forEach(el => el.style.display = 'block');
+                setTimeout(() => {
+                    document.getElementById('g-step-4-lrt').classList.add('current');
+                    document.getElementById('g-step-4-lrt').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 100);
+            } else {
+                document.querySelectorAll('.bus-step').forEach(el => el.style.display = 'block');
+                setTimeout(() => {
+                    document.getElementById('g-step-4-bus').classList.add('current');
+                    document.getElementById('g-step-4-bus').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 100);
+            }
+        }
+
+        // اختيار مسار العودة من الجامعة (طريق الرجوع)
+        function chooseReturnPath(pathType) {
+            let step1 = document.getElementById('r-step-1');
+            step1.classList.remove('current');
+            step1.classList.add('completed');
+            
+            step1.querySelector('.path-btns').style.opacity = '0.6';
+            step1.querySelector('.path-btns').style.pointerEvents = 'none';
+
+            if(pathType === 'lrt') {
+                document.querySelectorAll('.lrt-step-ret').forEach(el => el.style.display = 'block');
+                setTimeout(() => {
+                    document.getElementById('r-step-2-lrt').classList.add('current');
+                    document.getElementById('r-step-2-lrt').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 100);
+            } else {
+                document.querySelectorAll('.bus-step-ret').forEach(el => el.style.display = 'block');
+                setTimeout(() => {
+                    document.getElementById('r-step-2-bus').classList.add('current');
+                    document.getElementById('r-step-2-bus').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 100);
+            }
+        }
+
         // تفعيل الخطوات
         function markDone(currentStepId, nextStepId) {
             let currentStep = document.getElementById(currentStepId);
@@ -608,7 +785,7 @@
 
             currentStep.classList.remove('current');
             currentStep.classList.add('completed');
-            btn.innerHTML = 'اكتملت <i class="fa-solid fa-check-double"></i>';
+            btn.innerHTML = 'تم <i class="fa-solid fa-check-double"></i>';
 
             if (nextStep) {
                 nextStep.classList.add('current');
@@ -630,20 +807,16 @@
         /* ===== منطق ظهور نافذة التثبيت ===== */
         let deferredPrompt;
         
-        // التقاط حدث التثبيت النيتف من المتصفح
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
         });
 
-        // إظهار النافذة بعد 5 ثواني
         setTimeout(() => {
             let isDismissed = localStorage.getItem('installDismissed');
-            // التأكد أن المستخدم لم يقم برفضها مسبقاً
             if (!isDismissed) {
                 let overlay = document.getElementById('installOverlay');
                 overlay.style.display = 'flex';
-                // تفعيل الأنيميشن
                 setTimeout(() => {
                     overlay.classList.add('show');
                 }, 50);
@@ -652,7 +825,6 @@
 
         function installApp() {
             if (deferredPrompt) {
-                // إظهار نافذة التثبيت الأصلية الخاصة بالمتصفح
                 deferredPrompt.prompt();
                 deferredPrompt.userChoice.then((choiceResult) => {
                     if (choiceResult.outcome === 'accepted') {
@@ -661,8 +833,7 @@
                     deferredPrompt = null;
                 });
             } else {
-                // في حالة أن المتصفح لا يدعم أو لم يتم تجهيز ملف manifest.json
-                alert('لتثبيت التطبيق، اضغط على إعدادات المتصفح (الثلاث نقاط) واختر "إضافة إلى الشاشة الرئيسية" (Add to Home Screen).');
+                alert('عشان تنزلي التطبيق، اضغطي على إعدادات المتصفح (الثلاث نقط) واختاري "إضافة إلى الشاشة الرئيسية" (Add to Home Screen).');
             }
             closeInstallModal();
         }
@@ -674,7 +845,6 @@
                 overlay.style.display = 'none';
             }, 400);
             
-            // حفظ اختيار المستخدم حتى لا تظهر له النافذة كل مرة
             localStorage.setItem('installDismissed', 'true');
         }
     </script>
