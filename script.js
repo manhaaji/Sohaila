@@ -18,7 +18,8 @@ const state = {
   autoScrollFrame: null,
   autoScrollStopped: false,
   autoScrollPausedUntil: 0,
-  flowerTimer: null
+  flowerTimer: null,
+  songIndex: 0
 };
 
 const intro = $('#intro');
@@ -58,7 +59,7 @@ function init() {
   setupTilt();
   setupCursor();
   setupAnchors();
-  createPetalBurst(12);
+  // Decorative flower rain starts after intro; no continuous particle engine.
 }
 
 function preloader() {
@@ -70,20 +71,8 @@ function preloader() {
 }
 
 function startSmoothScroll() {
-  if (!window.Lenis) return;
-  state.lenis = new Lenis({
-    duration: 0.76,
-    smoothWheel: true,
-    syncTouch: true,
-    wheelMultiplier: 1.08,
-    touchMultiplier: 1.06,
-    lerp: 0.095
-  });
-  const raf = time => {
-    state.lenis.raf(time);
-    requestAnimationFrame(raf);
-  };
-  requestAnimationFrame(raf);
+  // Lightweight native scrolling: no Lenis animation loop.
+  document.documentElement.style.scrollBehavior = 'smooth';
 }
 
 function stopScroll() {
@@ -206,7 +195,8 @@ function chooseMainSong() {
   if (!music) return;
   const songs = ['music/song-1.mp3','music/song-2.mp3','music/song-3.mp3','music/song-4.mp3'];
   let index = Number(localStorage.getItem('suhailaMainSongIndex'));
-  if (!Number.isInteger(index) || index < 0 || index >= songs.length) index = Math.floor(Math.random()*songs.length);
+  if (!Number.isInteger(index) || index < 0 || index >= songs.length) index = 0;
+  state.songIndex = index;
   music.src = songs[index];
   localStorage.setItem('suhailaMainSongIndex', String((index + 1) % songs.length));
   music.load();
@@ -355,7 +345,7 @@ function startFlowerRain(){
   createWhiteRosePetal();
   state.flowerTimer = window.setInterval(() => {
     if (!document.hidden) createWhiteRosePetal();
-  }, window.innerWidth < 600 ? 1150 : 850);
+  }, window.innerWidth < 600 ? 1600 : 1200);
 }
 
 function createPetalBurst(count) {
@@ -756,13 +746,30 @@ function setupMessageJar(){
 function setupMiniPlayer(){
  const play=$('#playerPlay'), next=$('#playerNext'), progress=$('#playerProgress'), time=$('#playerTime'), track=$('#playerTrack'), vinyl=$('#vinyl');
  if(!music||!play)return;
- const songs=['music/song-1.mp3','music/song-2.mp3','music/song-3.mp3','music/song-4.mp3']; let idx=songs.findIndex(x=>music.src.endsWith(x)); if(idx<0)idx=0;
+ const songs=['music/song-1.mp3','music/song-2.mp3','music/song-3.mp3','music/song-4.mp3'];
  const names=['A little song for you','For my favorite person','White roses & memories','Always, Suhaila'];
+ let idx=Number.isInteger(state.songIndex)?state.songIndex:0;
  const sync=()=>{const d=music.duration||0,c=music.currentTime||0;if(progress)progress.value=d?(c/d*100):0;if(time)time.textContent=`${fmt(c)} / ${fmt(d)}`;vinyl?.classList.toggle('playing',!music.paused)};
- const load=(i,autoplay=false)=>{idx=(i+songs.length)%songs.length;music.src=songs[idx];music.load();if(track)track.textContent=`${String(idx+1).padStart(2,'0')} · ${names[idx]}`;if(autoplay)music.play().catch(()=>{});};
- play.addEventListener('click',()=>{if(music.paused)music.play().catch(()=>{});else music.pause()});next?.addEventListener('click',()=>load(idx+1,true));
+ const setTrackLabel=()=>{if(track)track.textContent=`${String(idx+1).padStart(2,'0')} · ${names[idx]}`};
+ const load=(i,autoplay=false)=>{
+   idx=(i+songs.length)%songs.length; state.songIndex=idx;
+   music.dataset.fallback=''; music.src=songs[idx]; music.load(); setTrackLabel();
+   if(autoplay) music.play().catch(()=>{});
+ };
+ setTrackLabel();
+ play.addEventListener('click',()=>{if(music.paused)music.play().catch(()=>{});else music.pause()});
+ next?.addEventListener('click',()=>load(idx+1,true));
  progress?.addEventListener('input',()=>{if(music.duration)music.currentTime=(Number(progress.value)/100)*music.duration});
- music.addEventListener('timeupdate',sync);music.addEventListener('loadedmetadata',sync);music.addEventListener('play',()=>{play.querySelector('span').textContent='Ⅱ';vinyl?.classList.add('playing')});music.addEventListener('pause',()=>{play.querySelector('span').textContent='▶';vinyl?.classList.remove('playing')});music.addEventListener('ended',()=>load(idx+1,true));
+ music.addEventListener('timeupdate',sync,{passive:true});
+ music.addEventListener('loadedmetadata',sync,{passive:true});
+ music.addEventListener('play',()=>{
+   if(music.currentTime < 0.05 && Number.isInteger(state.songIndex) && state.songIndex !== idx){
+     idx=state.songIndex; setTrackLabel();
+   }
+   play.querySelector('span').textContent='Ⅱ'; vinyl?.classList.add('playing');
+ });
+ music.addEventListener('pause',()=>{play.querySelector('span').textContent='▶';vinyl?.classList.remove('playing')});
+ music.addEventListener('ended',()=>load(idx+1,true));
  function fmt(x){if(!isFinite(x))return'0:00';return `${Math.floor(x/60)}:${String(Math.floor(x%60)).padStart(2,'0')}`}
 }
 
