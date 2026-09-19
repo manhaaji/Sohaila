@@ -14,7 +14,11 @@ const state = {
   startScroll: 0,
   lenis: null,
   petalTimer: null,
-  typingRun: 0
+  typingRun: 0,
+  autoScrollFrame: null,
+  autoScrollStopped: false,
+  autoScrollPausedUntil: 0,
+  flowerTimer: null
 };
 
 const intro = $('#intro');
@@ -46,6 +50,7 @@ function init() {
   setupCountdown();
   setupSectionFX();
   setupIntro();
+  startFlowerRain();
   setupLetter();
   setupGallery();
   setupLightbox();
@@ -138,6 +143,40 @@ async function startExperience(event) {
   resumeScroll();
   setupReveal();
   setupScrollAnimations();
+  startGentleOpeningScroll();
+}
+
+
+function startGentleOpeningScroll(){
+  if (state.autoScrollFrame || matchMedia('\(prefers-reduced-motion: reduce\)').matches) return;
+  state.autoScrollStopped = false;
+  state.autoScrollPausedUntil = performance.now() + 900;
+  const speed = window.innerWidth < 600 ? 7.2 : 10.5;
+  let lastTime = performance.now();
+  const pauseBriefly = () => { state.autoScrollPausedUntil = performance.now() + 2600; };
+  window.addEventListener('wheel', pauseBriefly, {passive:true});
+  window.addEventListener('touchstart', pauseBriefly, {passive:true});
+  const cleanup = () => {
+    if (state.autoScrollFrame) cancelAnimationFrame(state.autoScrollFrame);
+    state.autoScrollFrame = null;
+    window.removeEventListener('wheel', pauseBriefly);
+    window.removeEventListener('touchstart', pauseBriefly);
+  };
+  const frame = now => {
+    if (state.autoScrollStopped) { cleanup(); return; }
+    const dt = Math.min(50, now-lastTime)/1000; lastTime=now;
+    const modalOpen = !!document.querySelector('.modal.open, .password-modal.open, .letter-modal.open, body.modal-open');
+    const editing = document.activeElement && /^(TEXTAREA|INPUT)$/.test(document.activeElement.tagName);
+    if (now >= state.autoScrollPausedUntil && !document.hidden && !modalOpen && !editing && !document.body.classList.contains('locked')) {
+      const max = Math.max(0, document.documentElement.scrollHeight-window.innerHeight);
+      const current = window.scrollY || document.documentElement.scrollTop || 0;
+      if (current >= max-2) { state.autoScrollStopped=true; cleanup(); return; }
+      const next = Math.min(max, current + speed*dt);
+      if (state.lenis) state.lenis.scrollTo(next,{immediate:true}); else window.scrollTo(0,next);
+    }
+    state.autoScrollFrame=requestAnimationFrame(frame);
+  };
+  state.autoScrollFrame=requestAnimationFrame(frame);
 }
 
 function setupScrollAnimations() {
@@ -296,26 +335,27 @@ function burst(element) {
   }
 }
 
-function createWhiteRosePetal() {
+function createWhiteRosePetal(){
   if (!petals || document.hidden) return;
-  // Lightweight CSS animation: no GSAP instance is created for every falling flower.
-  const petal = document.createElement('span');
-  const flower = Math.random() < 0.22;
-  petal.className = flower ? 'petal fall-flower' : 'petal';
-  const size = flower ? 18 + Math.random() * 10 : 7 + Math.random() * 8;
-  const drift = (Math.random() - .5) * 150;
-  const duration = 8 + Math.random() * 5;
-  const rotation = (Math.random() - .5) * 700;
-  petal.style.left = `${Math.random() * 100}vw`;
-  petal.style.width = `${size}px`;
-  petal.style.height = `${flower ? size : size * 1.45}px`;
-  petal.style.opacity = `${.58 + Math.random() * .3}`;
-  petal.style.setProperty('--wind', `${drift}px`);
-  petal.style.setProperty('--spin', `${rotation}deg`);
-  petal.style.setProperty('--fall-duration', `${duration}s`);
-  petal.style.setProperty('--sway', `${2.8 + Math.random() * 2.5}s`);
+  const petal=document.createElement('span');
+  const flowers=['🌷','🌱','🌼','🌸','🌿'];
+  petal.className='petal emoji-flower';
+  petal.textContent=flowers[Math.floor(Math.random()*flowers.length)];
+  const size=11+Math.random()*8, drift=(Math.random()-.5)*130, duration=9+Math.random()*6, rotation=(Math.random()-.5)*260;
+  petal.style.left=`${Math.random()*100}vw`;
+  petal.style.fontSize=`${size}px`; petal.style.width='auto'; petal.style.height='auto';
+  petal.style.opacity=`${.16+Math.random()*.22}`;
+  petal.style.setProperty('--wind',`${drift}px`); petal.style.setProperty('--spin',`${rotation}deg`); petal.style.setProperty('--fall-duration',`${duration}s`);
   petals.appendChild(petal);
-  window.setTimeout(() => petal.remove(), (duration + 1) * 1000);
+  window.setTimeout(()=>petal.remove(),(duration+1)*1000);
+}
+
+function startFlowerRain(){
+  if (!petals || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  createWhiteRosePetal();
+  state.flowerTimer = window.setInterval(() => {
+    if (!document.hidden) createWhiteRosePetal();
+  }, window.innerWidth < 600 ? 1150 : 850);
 }
 
 function createPetalBurst(count) {
@@ -324,20 +364,18 @@ function createPetalBurst(count) {
   for (let i = 0; i < Math.min(count, 14); i++) setTimeout(createWhiteRosePetal, i * 55);
 }
 
-function setupReveal() {
-  const elements = $$('.reveal');
-  if (!elements.length) return;
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('in-view');
-        observer.unobserve(entry.target);
-      }
+function setupReveal(){
+  const elements=$$('.reveal'); if(!elements.length)return;
+  const observer=new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      if(!entry.isIntersecting)return;
+      const el=entry.target;
+      const siblings=el.parentElement?[...el.parentElement.querySelectorAll('.reveal')]:[];
+      el.style.setProperty('--reveal-delay',`${Math.min(360,Math.max(0,siblings.indexOf(el))*75)}ms`);
+      el.classList.add('in-view'); observer.unobserve(el);
     });
-  }, { threshold: .12, rootMargin: '0px 0px -35px' });
-  elements.forEach(el => {
-    if (!el.classList.contains('in-view')) observer.observe(el);
-  });
+  },{threshold:.08,rootMargin:'0px 0px -10% 0px'});
+  elements.forEach(el=>{if(!el.classList.contains('in-view'))observer.observe(el)});
 }
 
 function setupLetter() {
@@ -654,11 +692,15 @@ function calendar() {
 }
 
 function safeImages() {
-  $$('img').forEach(img => img.addEventListener('error', () => {
-    img.classList.add('broken');
-    img.removeAttribute('src');
-    img.alt = 'أضيفي الصورة هنا';
-  }, { once: true }));
+  $$('img').forEach(img => {
+    img.decoding = 'async';
+    if (!img.closest('.hero')) img.loading = 'lazy';
+    img.addEventListener('error', () => {
+      img.classList.add('broken');
+      img.removeAttribute('src');
+      img.alt = 'أضيفي الصورة هنا';
+    }, { once: true });
+  });
 }
 
 function setupTilt() {

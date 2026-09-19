@@ -320,3 +320,160 @@ body.locked .letter-modal.open{touch-action:none}
 .wish-section{padding:115px 0;background:linear-gradient(180deg,#f5ebe7,#fbfaf7)}.wish-inner{display:flex;justify-content:center}.wish-card{width:min(680px,92vw);padding:50px 46px;text-align:center;background:rgba(255,255,255,.8);border:1px solid rgba(166,136,96,.18);box-shadow:0 30px 80px rgba(76,56,49,.1);position:relative}.wish-card:before{content:"";position:absolute;inset:13px;border:1px solid rgba(166,136,96,.13);pointer-events:none}.wish-card h2{font:48px var(--font-ruqaa);color:#51433f;margin:5px 0 12px}.wish-card>p:not(.eyebrow){font:18px/1.9 var(--font-ar);color:#88766f}.wish-card textarea{position:relative;width:100%;min-height:150px;margin-top:20px;padding:18px 20px;resize:vertical;border:1px solid rgba(157,119,102,.2);background:#fffdfa;font:18px/1.9 var(--font-ar);color:#5d4b45;outline:none}.wish-card textarea:focus{border-color:#b98b96;box-shadow:0 0 0 4px rgba(185,139,150,.1)}.wish-bottom{display:flex;justify-content:space-between;align-items:center;margin-top:13px}.wish-bottom span{font:11px var(--font-editorial);color:#a08b82}.wish-bottom button{border:0;background:#3e3431;color:#fff;padding:14px 23px;font:16px var(--font-ar);cursor:pointer;box-shadow:0 12px 24px rgba(45,35,31,.14)}.wish-status{min-height:24px;margin-top:15px;font:15px var(--font-ar);color:#9c6d78}.wish-status.ok{color:#70866f}.wish-status.error{color:#a45f6e}
 @media(max-width:900px){.reasons-grid{grid-template-columns:repeat(2,1fr);gap:22px 15px}.reason-card{min-height:225px}.mini-player{padding:13px}.record-wrap,.vinyl{width:68px;height:68px;flex-basis:68px}.player-play{inset:18px}.message-jar-section{min-height:760px}}
 @media(max-width:560px){.reasons-grid{grid-template-columns:1fr 1fr}.reason-card{min-height:215px;padding:20px 16px}.reason-photo{height:65px}.reason-card h3{font-size:19px}.reason-card p{font-size:14px}.message-jar{transform:scale(.9)}.mini-player{gap:11px}.record-wrap,.vinyl{width:58px;height:58px;flex-basis:58px}.player-play{inset:13px;width:32px;height:32px}.player-top{font-size:9px}.player-bottom{font-size:9px}.wish-card{padding:40px 22px}.wish-card h2{font-size:40px}.wish-bottom{gap:10px;align-items:flex-end}.wish-bottom button{padding:12px 16px}}
+
+/* V7 — cinematic opening, lighter motion, docked music player, premium wish vault */
+.site{--player-height:94px}
+.site.visible .hero{animation:heroSoftIn 1.4s cubic-bezier(.2,.7,.2,1) both}
+.site.visible .hero:before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.34;background-image:radial-gradient(circle at 12% 22%,rgba(185,155,105,.7) 0 1px,transparent 1.7px),radial-gradient(circle at 74% 18%,rgba(185,155,105,.5) 0 1px,transparent 1.7px),radial-gradient(circle at 88% 58%,rgba(185,155,105,.45) 0 1px,transparent 1.7px),radial-gradient(circle at 30% 72%,rgba(185,155,105,.35) 0 1px,transparent 1.7px);background-size:240px 190px,310px 230px,280px 210px,350px 260px;animation:starDrift 14s ease-in-out infinite alternate}
+@keyframes heroSoftIn{from{opacity:.15;filter:blur(3px);transform:translateY(18px)}to{opacity:1;filter:none;transform:none}}
+@keyframes starDrift{from{background-position:0 0,40px 10px,0 30px,30px 0;transform:translate3d(0,0,0)}to{background-position:28px 22px,8px 34px,-24px 8px,55px 25px;transform:translate3d(0,3px,0)}}
+.stage-stars:before{animation:stars 11s ease-in-out infinite alternate,starTwinkle 3.8s ease-in-out infinite}
+@keyframes starTwinkle{0%,100%{opacity:.32}50%{opacity:.7}}
+.reveal{will-change:transform,opacity}
+
+/* Always-visible music banner under the navigation */
+.docked-player{position:fixed;top:86px;left:50%;transform:translate(-50%,-14px);z-index:490;width:min(900px,calc(100vw - 38px));margin:0;padding:12px 18px;border-radius:18px;background:rgba(255,253,249,.86);border:1px solid rgba(154,119,91,.18);box-shadow:0 18px 55px rgba(58,43,38,.13),inset 0 1px 0 rgba(255,255,255,.9);backdrop-filter:blur(20px) saturate(1.08);-webkit-backdrop-filter:blur(20px) saturate(1.08);opacity:0;visibility:hidden;transition:opacity .8s ease,transform .8s cubic-bezier(.2,.7,.2,1),visibility .8s}
+.site.visible .docked-player{opacity:1;visibility:visible;transform:translate(-50%,0);animation:playerEntrance 1s .25s both}
+@keyframes playerEntrance{from{opacity:0;transform:translate(-50%,-18px) scale(.97)}to{opacity:1;transform:translate(-50%,0) scale(1)}}
+.docked-player:before{content:"";position:absolute;inset:5px;border:1px solid rgba(185,155,105,.09);border-radius:14px;pointer-events:none}
+.docked-player .record-wrap{width:70px;height:70px;flex-basis:70px}
+.docked-player .vinyl{width:70px;height:70px}
+.docked-player .player-play{inset:18px;width:34px;height:34px}
+.docked-player .player-top{color:#66564f}
+.docked-player .player-bottom span{letter-spacing:.15em}
+.docked-player .player-bottom button{font-weight:600}
+
+/* Give the first hero comfortable breathing room below the fixed player */
+.hero{padding-top:170px}
+
+/* Performance-friendly image rendering */
+img{max-width:100%;height:auto}
+.photo-frame img,.gallery-card img{display:block;image-rendering:auto}
+
+/* Premium wish vault */
+.wish-section{position:relative;isolation:isolate;min-height:900px;display:grid;place-items:center;padding:135px 0 120px;overflow:hidden;background:radial-gradient(circle at 50% 30%,rgba(255,255,255,.98),rgba(246,235,230,.92) 45%,#eee0da 100%)}
+.wish-section:before{content:"";position:absolute;inset:0;z-index:-2;background:linear-gradient(115deg,transparent 0 30%,rgba(255,255,255,.34) 48%,transparent 68%);animation:wishLight 10s ease-in-out infinite alternate}
+@keyframes wishLight{from{transform:translateX(-18%)}to{transform:translateX(18%)}}
+.wish-stars{position:absolute;top:13%;left:50%;transform:translateX(-50%);font:13px var(--font-editorial);letter-spacing:.8em;color:rgba(174,142,94,.45);white-space:nowrap;animation:floatStars 5s ease-in-out infinite}
+@keyframes floatStars{50%{transform:translate(-50%,-7px);opacity:.75}}
+.wish-orbit{position:absolute;border:1px solid rgba(174,142,94,.12);border-radius:50%;pointer-events:none}.orbit-one{width:760px;height:760px;top:50%;left:50%;transform:translate(-50%,-50%) rotate(8deg)}.orbit-two{width:560px;height:560px;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-12deg);border-style:dashed}
+.wish-card{width:min(760px,92vw);padding:64px 64px 46px;text-align:center;position:relative;background:linear-gradient(145deg,rgba(255,254,250,.96),rgba(248,241,234,.94));border:1px solid rgba(151,113,90,.2);box-shadow:0 35px 100px rgba(79,57,49,.14),0 3px 0 rgba(255,255,255,.8) inset;overflow:visible}
+.wish-card:before{content:"";position:absolute;inset:12px;border:1px solid rgba(174,142,94,.2);pointer-events:none}
+.wish-card:after{content:"";position:absolute;inset:22px;background:linear-gradient(90deg,transparent 49.8%,rgba(174,142,94,.045) 50%,transparent 50.2%);pointer-events:none}
+.wish-corner{position:absolute;width:34px;height:34px;border-color:#b79869;opacity:.6;z-index:2}.corner-tl{top:20px;left:20px;border-top:1px solid;border-left:1px solid}.corner-tr{top:20px;right:20px;border-top:1px solid;border-right:1px solid}.corner-bl{bottom:20px;left:20px;border-bottom:1px solid;border-left:1px solid}.corner-br{bottom:20px;right:20px;border-bottom:1px solid;border-right:1px solid}
+.wish-seal{position:absolute;top:-31px;left:50%;transform:translateX(-50%) rotate(-6deg);width:72px;height:72px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 35% 30%,#c28d9a,#875d68 72%);color:#fff;box-shadow:0 13px 25px rgba(80,49,57,.22),inset 0 2px 4px rgba(255,255,255,.28);z-index:5}.wish-seal:before{content:"";position:absolute;inset:8px;border:1px dashed rgba(255,255,255,.55);border-radius:50%}.wish-seal span{font:30px var(--font-editorial);position:relative}.wish-kicker{display:block;margin:8px 0 6px;font:10px var(--font-editorial);letter-spacing:.3em;color:#9b805e}
+.wish-card h2{font-size:clamp(48px,6vw,70px);margin:4px 0 12px;color:#4c403d}.wish-lead{font:17px/1.95 var(--font-ar);color:#87766f;margin:0 auto 30px;position:relative;z-index:3}
+.wish-paper{position:relative;width:min(600px,100%);margin:0 auto;padding:24px 28px 28px;background:#f8efd9;border:1px solid rgba(125,93,61,.18);box-shadow:0 16px 35px rgba(91,62,39,.12);transform:rotate(-.45deg);z-index:3}.wish-paper:before{content:"";position:absolute;inset:9px;border:1px dashed rgba(133,100,67,.18);pointer-events:none}.wish-paper:after{content:"";position:absolute;left:18px;right:18px;top:13px;height:1px;background:rgba(151,112,71,.12)}
+.paper-top{position:relative;display:flex;justify-content:space-between;align-items:center;margin-bottom:17px;padding-bottom:10px;border-bottom:1px solid rgba(133,100,67,.14);font:10px var(--font-editorial);letter-spacing:.16em;color:#a18467}.paper-top i{font-style:normal;font-size:18px;color:#a87884}
+.wish-paper label{display:block;text-align:right;margin-bottom:8px;font:16px var(--font-ar);color:#66544a}.wish-card textarea{min-height:170px;margin-top:0;padding:19px 20px;border:1px solid rgba(126,94,63,.18);background:rgba(255,252,241,.74);font-size:18px;line-height:1.95;box-shadow:inset 0 1px 10px rgba(100,70,40,.025)}
+.wish-card textarea::placeholder{color:#b29f8f}.wish-card textarea:focus{border-color:#b58b96;box-shadow:0 0 0 4px rgba(181,139,150,.1),inset 0 1px 10px rgba(100,70,40,.025)}
+.wish-bottom{position:relative;z-index:4}.wish-bottom button{border-radius:999px;padding:13px 22px;background:linear-gradient(135deg,#4a3c39,#2f2825);transition:transform .25s,box-shadow .25s}.wish-bottom button:hover{transform:translateY(-2px);box-shadow:0 15px 28px rgba(45,35,31,.18)}.wish-bottom button:disabled{opacity:.6;cursor:wait}.wish-bottom button b{margin-right:7px}
+.wish-status{position:relative;z-index:4}.wish-private{position:relative;z-index:3;margin:20px 0 0;font:12px var(--font-ar);color:#a18f86}.wish-private i{display:inline-block;width:7px;height:7px;border-radius:50%;background:#9e7a84;margin-left:7px;box-shadow:0 0 0 5px rgba(158,122,132,.08)}
+
+@media(max-width:800px){
+ .hero{padding-top:154px}
+ .docked-player{top:72px;width:calc(100vw - 20px);padding:9px 11px;border-radius:15px}.docked-player .record-wrap,.docked-player .vinyl{width:58px;height:58px;flex-basis:58px}.docked-player .player-play{inset:13px;width:32px;height:32px}.docked-player .player-top{font-size:9px}.docked-player .player-bottom{font-size:9px}.docked-player .player-bottom span{max-width:55%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ .wish-section{min-height:820px;padding:115px 0 90px}.wish-card{padding:56px 24px 38px}.wish-lead{font-size:15px}.wish-paper{padding:22px 17px 23px}.wish-card textarea{min-height:155px;font-size:16px}.wish-private{font-size:11px}.orbit-one{width:620px;height:620px}.orbit-two{width:430px;height:430px}
+}
+@media(max-width:560px){
+ .hero{padding-top:145px}.docked-player .player-info{min-width:0}.docked-player .player-top span:first-child{max-width:57%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.docked-player .player-bottom button{font-size:10px}.wish-section{min-height:790px}.wish-card{width:94vw;padding:53px 15px 32px}.wish-card:before{inset:9px}.wish-corner{width:25px;height:25px}.corner-tl{top:14px;left:14px}.corner-tr{top:14px;right:14px}.corner-bl{bottom:14px;left:14px}.corner-br{bottom:14px;right:14px}.wish-seal{width:64px;height:64px;top:-28px}.wish-seal span{font-size:27px}.wish-kicker{font-size:8px}.wish-card h2{font-size:43px}.wish-lead br{display:none}.wish-bottom{align-items:center}.wish-bottom button{padding:11px 15px;font-size:14px}.wish-paper{transform:rotate(0)}
+}
+@media(prefers-reduced-motion:reduce){.site.visible .hero,.site.visible .hero:before,.stage-stars:before,.wish-section:before,.wish-stars{animation:none!important}.docked-player{animation:none!important}}
+
+/* V8 — soft cinematic reveals, bottom docked player, translucent emoji flower breeze */
+html,body{scroll-behavior:auto}
+.reveal{
+  opacity:0;
+  transform:translate3d(0,28px,0) scale(.985);
+  filter:blur(2px);
+  transition:
+    opacity 1.15s cubic-bezier(.22,.61,.36,1),
+    transform 1.15s cubic-bezier(.22,.61,.36,1),
+    filter 1.15s cubic-bezier(.22,.61,.36,1);
+  transition-delay:var(--reveal-delay,0ms);
+  will-change:opacity,transform,filter;
+}
+.reveal.in-view{opacity:1;transform:none;filter:blur(0)}
+
+/* The player lives at the bottom and stays with the visitor throughout the journey. */
+.docked-player{
+  top:auto;
+  bottom:max(18px,env(safe-area-inset-bottom));
+  transform:translate(-50%,18px);
+  width:min(900px,calc(100vw - 38px));
+  border-radius:20px;
+  padding:12px 18px;
+  z-index:12000;
+  box-shadow:0 20px 65px rgba(45,32,29,.18),0 2px 0 rgba(255,255,255,.85) inset;
+}
+.site.visible .docked-player{transform:translate(-50%,0)}
+.docked-player:after{
+  content:"";
+  position:absolute;
+  left:14%;right:14%;bottom:-7px;height:14px;
+  background:rgba(163,125,133,.10);
+  filter:blur(12px);
+  border-radius:50%;
+  pointer-events:none;
+}
+.hero{padding-top:120px;padding-bottom:145px}
+.site{padding-bottom:120px}
+
+/* Small flowers/leaves falling like a quiet breeze. */
+#petals{z-index:11900;pointer-events:none;contain:layout paint}
+.petal.emoji-flower{
+  top:-40px!important;
+  display:block;
+  font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;
+  line-height:1;
+  background:none!important;
+  border:0!important;
+  box-shadow:none!important;
+  border-radius:0!important;
+  text-shadow:0 1px 8px rgba(120,88,94,.16);
+  animation:emojiFlowerFall var(--fall-duration,11s) linear forwards;
+  transform:translate3d(0,-45px,0) rotate(0deg);
+  will-change:transform,opacity;
+}
+.petal.emoji-flower:before,.petal.emoji-flower:after{display:none!important;content:none!important}
+@keyframes emojiFlowerFall{
+  0%{transform:translate3d(0,-45px,0) rotate(0deg);opacity:0}
+  9%{opacity:1}
+  30%{transform:translate3d(calc(var(--wind)*.28),28vh,0) rotate(calc(var(--spin)*.25))}
+  55%{transform:translate3d(calc(var(--wind)*-.12),53vh,0) rotate(calc(var(--spin)*.55))}
+  78%{transform:translate3d(calc(var(--wind)*.52),78vh,0) rotate(calc(var(--spin)*.78))}
+  100%{transform:translate3d(var(--wind),112vh,0) rotate(var(--spin));opacity:0}
+}
+
+@media(max-width:800px){
+  .docked-player{width:calc(100vw - 18px);padding:9px 11px;border-radius:17px;bottom:max(10px,env(safe-area-inset-bottom))}
+  .hero{padding-top:95px;padding-bottom:125px}
+}
+@media(max-width:560px){
+  .docked-player{gap:10px}
+  .docked-player .record-wrap,.docked-player .vinyl{width:56px;height:56px;flex-basis:56px}
+  .docked-player .player-play{inset:12px;width:32px;height:32px}
+  .docked-player .player-top{font-size:8.5px}
+  .docked-player .player-bottom{font-size:8px}
+  .hero{padding-top:80px}
+}
+@media(prefers-reduced-motion:reduce){
+  .reveal{opacity:1;transform:none;filter:none;transition:none}
+  .petal.emoji-flower{display:none}
+}
+
+/* V8 — soft cinematic reveals, bottom docked player, translucent emoji flower breeze */
+html,body{scroll-behavior:auto}
+.reveal{opacity:0;transform:translate3d(0,28px,0) scale(.985);filter:blur(2px);transition:opacity 1.15s cubic-bezier(.22,.61,.36,1),transform 1.15s cubic-bezier(.22,.61,.36,1),filter 1.15s cubic-bezier(.22,.61,.36,1);transition-delay:var(--reveal-delay,0ms);will-change:opacity,transform,filter}
+.reveal.in-view{opacity:1;transform:none;filter:blur(0)}
+.docked-player{top:auto;bottom:max(18px,env(safe-area-inset-bottom));transform:translate(-50%,18px);width:min(900px,calc(100vw - 38px));border-radius:20px;padding:12px 18px;z-index:12000;box-shadow:0 20px 65px rgba(45,32,29,.18),0 2px 0 rgba(255,255,255,.85) inset}
+.site.visible .docked-player{transform:translate(-50%,0)}
+.docked-player:after{content:"";position:absolute;left:14%;right:14%;bottom:-7px;height:14px;background:rgba(163,125,133,.10);filter:blur(12px);border-radius:50%;pointer-events:none}
+.hero{padding-top:120px;padding-bottom:145px}.site{padding-bottom:120px}
+#petals{z-index:11900;pointer-events:none;contain:layout paint}
+.petal.emoji-flower{top:-40px!important;display:block;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;line-height:1;background:none!important;border:0!important;box-shadow:none!important;border-radius:0!important;text-shadow:0 1px 8px rgba(120,88,94,.16);animation:emojiFlowerFall var(--fall-duration,11s) linear forwards;transform:translate3d(0,-45px,0) rotate(0deg);will-change:transform,opacity}
+.petal.emoji-flower:before,.petal.emoji-flower:after{display:none!important;content:none!important}
+@keyframes emojiFlowerFall{0%{transform:translate3d(0,-45px,0) rotate(0deg);opacity:0}9%{opacity:1}30%{transform:translate3d(calc(var(--wind)*.28),28vh,0) rotate(calc(var(--spin)*.25))}55%{transform:translate3d(calc(var(--wind)*-.12),53vh,0) rotate(calc(var(--spin)*.55))}78%{transform:translate3d(calc(var(--wind)*.52),78vh,0) rotate(calc(var(--spin)*.78))}100%{transform:translate3d(var(--wind),112vh,0) rotate(var(--spin));opacity:0}}
+@media(max-width:800px){.docked-player{width:calc(100vw - 18px);padding:9px 11px;border-radius:17px;bottom:max(10px,env(safe-area-inset-bottom))}.hero{padding-top:95px;padding-bottom:125px}}
+@media(max-width:560px){.docked-player{gap:10px}.docked-player .record-wrap,.docked-player .vinyl{width:56px;height:56px;flex-basis:56px}.docked-player .player-play{inset:12px;width:32px;height:32px}.docked-player .player-top{font-size:8.5px}.docked-player .player-bottom{font-size:8px}.hero{padding-top:80px}}
+@media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;filter:none;transition:none}.petal.emoji-flower{display:none}}

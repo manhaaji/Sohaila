@@ -1,7 +1,7 @@
 /* White Rose FX — single-canvas falling flowers + subtle ambient motion */
 (() => {
   'use strict';
-  const cfg={count:30,maxFlowers:7,spawnEvery:760,maxDpr:1.25};
+  const mobile=matchMedia('(max-width: 800px)').matches; const cfg={count:mobile?18:30,maxFlowers:mobile?4:7,spawnEvery:mobile?980:760,maxDpr:mobile?1:1.25};
   const state={items:[],last:0,lastSpawn:0,raf:0,visible:true,started:false};
   const flowerSrc='assets/roses/white-rose.svg', petalSrc='assets/roses/petal.svg';
   let canvas,ctx,W=0,H=0,dpr=1,flowerImg,petalImg;

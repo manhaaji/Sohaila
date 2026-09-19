@@ -256,7 +256,7 @@
    <p class="eyebrow">A SECRET WISH · 20</p>
    <span class="wish-kicker">PRIVATE WISH VAULT</span>
    <h2>صندوق الأماني</h2>
-   <p class="wish-lead">نفسك في إيه؟ اكتبي هنا أي أمنية تيجي على بالك </p>
+   <p class="wish-lead">قبل ما تبدأ سنة سُهيلة العشرين، اكتبي أمنية واحدة من قلبكِ.<br>هتطلع من هنا في رسالة خاصة… كأنها ورقة اتحطّت في صندوق قديم.</p>
    <div class="wish-paper">
     <div class="paper-top"><span>20 · 09 · 2026</span><i>♡</i></div>
     <form id="wishForm" action="wish.php" method="POST">
