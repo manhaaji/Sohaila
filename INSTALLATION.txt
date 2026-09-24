@@ -1,0 +1,19 @@
+SUHAILA BIRTHDAY 2026 — SECURE FINAL
+
+IMPORTANT:
+- index.php is the REAL website entry point because the password is enforced server-side.
+- index.html is only a safe redirect to index.php. Do not replace index.php with a static HTML file.
+- private/site.php contains the complete site HTML and is protected from direct access.
+- private/assets contains the site's CSS/JS.
+- private/media is protected and is where the user's images/music belong.
+
+PASSWORD:
+S or s
+
+MEDIA EXPECTED BY THE CURRENT DESIGN:
+images/01.jpg through images/08.jpg
+images/star-map.jpg
+music/song-1.mp3 through music/song-4.mp3
+music/letter-song.mp3
+
+The media files are intentionally not fabricated. Put the user's real photos and songs into those paths.
