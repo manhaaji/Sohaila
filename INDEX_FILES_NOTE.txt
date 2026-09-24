@@ -1,5 +1,0 @@
-The secure site does not use a public index.html as the actual page.
-Actual entry: index.php
-Complete protected site markup: private/site.php
-Static redirect: index.html -> index.php
-This structure is intentional so visitors cannot bypass the server-side password by opening a static HTML page.
