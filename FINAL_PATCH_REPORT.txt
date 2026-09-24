@@ -1,0 +1,46 @@
+SUHAILA BIRTHDAY 2026 — FINAL PATCH REPORT
+
+1) PASSWORD GATE
+- The password gate is now the FIRST DOM element after <body>.
+- access-locked hides every other page element before unlock.
+- No hint, name, birthday, S, or personal clue appears in the gate copy.
+- Any text is accepted by the field, but only S or s unlocks the experience.
+- Password length: up to 64 characters.
+- The gate is pink/floral, layered, animated, and responsive.
+
+2) AFTER CORRECT PASSWORD
+- The password overlay closes immediately.
+- The preloader is forced hidden so the user sees the intro screen.
+- The intro says: اضغطي على القلب.
+- The cinematic opening does NOT run on password entry; it runs when the heart is pressed.
+
+3) OPENING
+- The old theatre/fabric curtain look was replaced with a modern blush-pink floral veil design.
+- Heart click triggers the cinematic sealed opening plus the new veil opening.
+- Gold/pink glow, seal, light sweep and fade remain compatible with the existing design.
+
+4) REASSURANCE MESSAGE
+- A calm popup appears exactly 5 seconds after the curtain opening starts.
+- It fades in softly and pauses the page auto-scroll.
+- The message is split into readable paragraphs.
+- Continue button closes it with a soft fade and resumes scrolling.
+- It appears again on every fresh page visit after the password and opening sequence.
+
+5) MAIN MUSIC
+- Four main tracks are treated as a playlist.
+- No single-track loop.
+- Next track is preloaded on the second audio deck.
+- Crossfade starts near the end of the current track.
+- If the next track is still loading when the current one ends, a fallback transition starts as soon as the next track is playable; the transition cannot get stuck waiting indefinitely.
+
+6) LETTER MUSIC
+- The special letter track remains: music/letter-song.mp3
+- Opening the letter stores whether the main track was playing.
+- Main music fades down smoothly while the letter track fades up.
+- Closing the letter only resumes the main track if it was playing before the letter opened.
+
+7) GITHUB PAGES
+- Static-only architecture.
+- No PHP dependency.
+- No ScrollTrigger, Lenis, or effects.js dependency.
+- index.html remains the entry point.

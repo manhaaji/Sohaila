@@ -1,0 +1,26 @@
+SUHAILA BIRTHDAY 2026 — V4 FIX REPORT
+
+1) HEART / CURTAIN BUG
+The previous modern veil had z-index:30 while the heart content was z-index:20, so the veil covered the heart and blocked visibility/clicks.
+V4 fixes this by forcing the veil to z-index:8 and the intro content to z-index:50/60, with pointer-events disabled on the veil.
+
+2) PASSWORD FLOW
+After correct S/s, the script now explicitly:
+- removes access lock
+- hides the preloader
+- removes intro done/opening states
+- forces the intro visible
+- forces the heart button visible and clickable
+- marks body as site-unlocked
+The initial gate cannot accidentally reopen from the heart click. The same password UI remains available later only for the private letter.
+
+3) OPENING
+The modern pink floral veil opens immediately after the heart click. The intro is not removed until the opening sequence completes.
+
+4) GOLD REMOVAL
+Legacy gold/champagne variables and the old cinematic gold accents were overridden/replaced with rose/pink/ivory tones. The V4 authoritative CSS overrides the opening seal, sweep, flare, covers and accents.
+
+5) VALIDATION
+- JavaScript syntax check: PASS
+- ZIP integrity test: PASS
+- index.html remains the user-provided/customized version with V4 fixes applied.

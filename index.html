@@ -9,44 +9,36 @@
 <link rel="stylesheet" href="fonts.css">
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="effects.css">
-<style id="access-critical">
-html,body.pre-access{overflow:hidden!important;background:#0b0809!important}
-body.pre-access > *:not(#siteAccessGate){visibility:hidden!important}
-#siteAccessGate{position:fixed!important;inset:0!important;z-index:50000!important;visibility:visible!important;display:grid!important;place-items:center!important;background:#0b0809!important;color:#f8eee7!important}
-#siteAccessGate .access-backdrop{position:absolute;inset:0;background:radial-gradient(circle at 50% 45%,#211918 0,#0b0809 52%,#060506 100%)}
-#siteAccessGate .access-card{position:relative;z-index:2}
-</style>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" defer></script>
 
+<style id="critical-access-style">
+html,body{margin:0}body.access-locked{overflow:hidden!important;touch-action:none!important}body.access-locked> :not(#passwordModal){visibility:hidden!important}body.access-locked #passwordModal{visibility:visible!important;opacity:1!important;pointer-events:auto!important}
+.password-modal{visibility:hidden;opacity:0}.password-modal.open{visibility:visible;opacity:1;pointer-events:auto}</style>
 </head>
-<body class="pre-access">
+<body class="access-locked">
 
-<!-- =========================================================
-     PRIVATE ACCESS — STATIC GATE
-     GitHub Pages compatible. Visual gate only.
-========================================================= -->
-<div id="siteAccessGate" class="site-access-gate" role="dialog" aria-modal="true" aria-labelledby="siteAccessTitle">
-  <div class="access-backdrop"></div>
-  <div class="access-atmosphere" aria-hidden="true"><i></i><b></b><span></span></div>
-  <div class="access-card">
-    <div class="access-frame" aria-hidden="true"></div>
-    <div class="access-emblem" aria-hidden="true"><span class="keyhole-ring"></span><span class="keyhole"></span></div>
-    <p class="access-overline">PRIVATE EXPERIENCE · ACCESS</p>
-    <h1 id="siteAccessTitle">مساحة خاصة</h1>
-    <p class="access-subtitle">أدخل مفتاح الوصول للمتابعة</p>
-    <div class="access-input-shell">
-      <span class="access-input-icon" aria-hidden="true">⌁</span>
-      <input id="siteAccessInput" type="password" inputmode="text" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="64" aria-label="مفتاح الوصول">
-      <span class="access-input-line"></span>
-    </div>
-    <p id="siteAccessError" class="access-error" role="alert" aria-live="polite">تعذر التحقق من مفتاح الوصول.</p>
-    <button id="siteAccessSubmit" class="access-submit" type="button">
-      <span>ENTER</span><i>↗</i>
-    </button>
-    <div class="access-bottom" aria-hidden="true"><span></span><b>PRIVATE</b><span></span></div>
+<!-- PASSWORD GATE — FIRST PIXEL / BEFORE THE EXPERIENCE -->
+<div id="passwordModal" class="password-modal site-gate open" aria-hidden="false">
+ <div class="password-backdrop"></div>
+ <div class="password-card" role="dialog" aria-modal="true" aria-labelledby="passwordTitle">
+  <div class="password-flower flower-a">✿</div><div class="password-flower flower-b">❀</div><div class="password-flower flower-c">✾</div>
+  <div class="password-orbit orbit-a"></div><div class="password-orbit orbit-b"></div>
+  <div class="password-seal"><span>✦</span></div>
+  <p class="password-kicker">PRIVATE GARDEN · ACCESS</p>
+  <h2 id="passwordTitle">لحظة قبل البداية</h2>
+  <p class="password-copy">أدخلي رمز الوصول للانتقال إلى التجربة.</p>
+  <div class="password-input-wrap">
+   <span class="input-label">ACCESS CODE</span>
+   <input id="letterPassword" type="password" inputmode="text" maxlength="64" autocomplete="off" placeholder="••••••••" aria-label="رمز الوصول">
   </div>
+  <p id="passwordError" class="password-error" role="alert" aria-live="polite">رمز الوصول غير صحيح.</p>
+  <button id="passwordSubmit" class="password-submit" type="button"><span>دخول هادئ</span><b>↗</b></button>
+  <small class="password-note" aria-hidden="true"></small>
+  <div class="password-bottom-ornament">❦　✿　❦</div>
+ </div>
 </div>
 
+<!-- CINEMATIC SEALED OPENING -->
 <div id="cinematicReveal" class="cinematic-reveal" aria-hidden="true">
   <div class="reveal-vignette"></div>
   <div class="reveal-aura"></div>
@@ -54,17 +46,17 @@ body.pre-access > *:not(#siteAccessGate){visibility:hidden!important}
   <div class="reveal-cover reveal-cover-right"><span></span></div>
   <div class="reveal-ornament ornament-top">❧ ❦ ❧</div>
   <div class="reveal-ornament ornament-bottom">❧ ❦ ❧</div>
-  <div class="reveal-seal"><span>◆</span><i></i></div>
+  <div class="reveal-seal"><span>✦</span><i></i></div>
   <div class="reveal-light-sweep"></div>
   <div class="reveal-flare"></div>
-  <div class="reveal-word">A LITTLE SURPRISE</div>
+  <div class="reveal-word">A PRIVATE MOMENT</div>
 </div>
 <div id="preloader" class="preloader"><div class="preloader-mark">S</div><p>لـ سُهيلة</p></div>
 <div class="grain" aria-hidden="true"></div>
 <div class="cursor" aria-hidden="true"></div>
 <div id="petals" aria-hidden="true"></div>
 <audio id="birthdayMusic" preload="auto"></audio>
-<audio id="birthdayMusicNext" preload="none"></audio>
+<audio id="birthdayMusicNext" preload="auto"></audio>
 <audio id="letterMusic" src="music/letter-song.mp3" preload="auto" loop></audio>
 
 <section id="intro" class="intro" aria-label="البداية">
@@ -169,21 +161,23 @@ body.pre-access > *:not(#siteAccessGate){visibility:hidden!important}
  </div>
 </section>
 
-<div id="passwordModal" class="password-modal" aria-hidden="true">
- <div class="password-backdrop"></div>
- <div class="password-card" role="dialog" aria-modal="true" aria-labelledby="passwordTitle">
-  <button id="passwordClose" class="password-close" type="button" aria-label="إغلاق">×</button>
-  <div class="password-seal"><span>S</span></div>
-  <p class="password-kicker">A PRIVATE LITTLE SECRET</p>
-  <h2 id="passwordTitle">الجواب ليكي وحدك</h2>
-  <p class="password-copy">قبل ما نفتحه… فيه كلمة صغيرة لازم تعرفيها.</p>
-  <div class="password-input-wrap">
-   <input id="letterPassword" type="password" inputmode="text" maxlength="1" autocomplete="off" placeholder="•" aria-label="كلمة السر">
-   <span>كلمة السر</span>
+
+<div id="reassuranceModal" class="reassurance-modal" aria-hidden="true">
+ <div class="reassurance-backdrop"></div>
+ <div class="reassurance-card" role="dialog" aria-modal="true" aria-labelledby="reassuranceTitle">
+  <div class="reassurance-glow"></div>
+  <div class="reassurance-flower-line"><span>✿</span><i></i><span>❀</span><i></i><span>✿</span></div>
+  <p class="reassurance-kicker">A LITTLE REMINDER · FOR YOU</p>
+  <h2 id="reassuranceTitle">قبل ما تكمّلي…</h2>
+  <div class="reassurance-divider"><span>♡</span></div>
+  <div class="reassurance-text">
+   <p>لو في يوم الشيطان لعب في دماغك وحسيتي إني اتغيرت أو مبقتش أحبك، أو جه في بالك إني ممكن أبعد..</p>
+   <p>افتحي الموقع تقري الكلام اللي فيه تاني وتالت.</p>
+   <p>الكلام ده مش مجرد كلام مناسبة وعدت، ده حقيقتي ناحيتك اللي مش هتتغير مهما الأيام عدت ومهما حصل بينا أو اتضغطنا.</p>
+   <p>ارجعي للكلام ده عشان تتأكدي إنتي إيه بالنسبة لي، وإني مستحيل أتغير من ناحيتك.</p>
   </div>
-  <p id="passwordError" class="password-error" role="alert" aria-live="polite">الكلمة دي مش هي… جربي تاني بهدوء ♡</p>
-  <button id="passwordSubmit" class="password-submit" type="button"><span>فتح الجواب</span><b>↗</b></button>
-  <small class="password-note">تلميح صغير: حرف واحد فقط.</small>
+  <button id="reassuranceContinue" class="reassurance-continue" type="button"><span>استمرار</span><b>↓</b></button>
+  <div class="reassurance-signature">مازن <span>♡</span></div>
  </div>
 </div>
 
@@ -303,7 +297,7 @@ body.pre-access > *:not(#siteAccessGate){visibility:hidden!important}
    <p class="wish-lead">نفسك في إيه؟ اكتبي هنا أي أمنية تيجي على بالك </p>
    <div class="wish-paper">
     <div class="paper-top"><span>20 · 09 · 2026</span><i>♡</i></div>
-    <form id="wishForm" action="wish.php" method="POST">
+    <form id="wishForm" action="#wishBox" method="POST">
      <label for="wishInput">اكتبي أمنيتكِ هنا</label>
      <textarea id="wishInput" name="wish" maxlength="600" required placeholder="أمنيتي في سنتي العشرين هي…"></textarea>
      <div class="wish-bottom"><span id="wishCount">0 / 600</span><button type="submit" id="wishSubmit"><span>احفظي الأمنية</span><b>↗</b></button></div>

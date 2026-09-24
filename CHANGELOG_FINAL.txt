@@ -1,0 +1,13 @@
+FINAL UPDATE — based on user's latest index.html
+
+- Preserved the supplied index structure/content and added the requested features.
+- Added initial password gate before the experience.
+- Removed password hints and any visible clue to the actual password.
+- Password field accepts up to 64 characters; only S/s unlocks.
+- Added cinematic sealed-opening overlay after password acceptance.
+- Added second main audio deck for seamless song-to-song crossfade.
+- Main playlist: song-1.mp3 -> song-2.mp3 -> song-3.mp3 -> song-4.mp3 -> repeat.
+- Added gentle 2.6-second crossfade before track end.
+- Added dedicated letter-song crossfade using music/letter-song.mp3.
+- Main music fades down before letter music; reverse fade on close.
+- Kept GitHub Pages compatibility: no PHP dependency.

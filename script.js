@@ -19,7 +19,8 @@ const state = {
   autoScrollStopped: false,
   autoScrollPausedUntil: 0,
   flowerTimer: null,
-  songIndex: 0
+  songIndex: 0,
+  pendingCanPlayHandler: null
 };
 
 const intro = $('#intro');
@@ -35,6 +36,8 @@ const passwordSubmit = $('#passwordSubmit');
 const passwordClose = $('#passwordClose');
 const passwordError = $('#passwordError');
 const letterModal = $('#letterModal');
+const reassuranceModal = $('#reassuranceModal');
+const reassuranceContinue = $('#reassuranceContinue');
 
 function init() {
   document.documentElement.classList.add('js');
@@ -87,7 +90,7 @@ function resumeScroll() {
 
 function setupIntro() {
   if (!startButton) return;
-  startButton.addEventListener('click', startExperience);
+  startButton.onclick = startExperience;
   setupAccessGate();
 }
 
@@ -100,113 +103,102 @@ function setPasswordMode(mode){
   const note=$('.password-note',passwordModal);
   if(mode==='site'){
     passwordModal.classList.add('site-gate');
-    if(kicker)kicker.textContent='ACCESS REQUEST · PRIVATE EXPERIENCE';
-    if(title)title.textContent='طلب تأكيد الدخول';
-    if(copy)copy.textContent='قبل ما تبدأ المفاجأة… اكتب كلمة المرور لفتح التجربة كاملة.';
-    if(submit)submit.textContent='تأكيد وفتح الموقع';
-    if(note)note.textContent='كلمة المرور: حرف واحد فقط.';
+    if(kicker)kicker.textContent='PRIVATE ACCESS';
+    if(title)title.textContent='دخول خاص';
+    if(copy)copy.textContent='هذه الصفحة خاصة. أدخل رمز الوصول للمتابعة.';
+    if(submit)submit.textContent='متابعة';
+    if(note)note.textContent='';
   }else{
     passwordModal.classList.remove('site-gate');
-    if(kicker)kicker.textContent='A PRIVATE LITTLE SECRET';
-    if(title)title.textContent='الجواب ليكي وحدك';
-    if(copy)copy.textContent='قبل ما نفتحه… فيه كلمة صغيرة لازم تعرفيها.';
+    if(kicker)kicker.textContent='PRIVATE LETTER';
+    if(title)title.textContent='الجواب الخاص';
+    if(copy)copy.textContent='هناك رسالة خاصة بالداخل.';
     if(submit)submit.textContent='فتح الجواب';
-    if(note)note.textContent='تلميح صغير: حرف واحد فقط.';
-  }
-}
-
-function setupAccessGate(){
-  const gate=$('#siteAccessGate');
-  const input=$('#siteAccessInput');
-  const submit=$('#siteAccessSubmit');
-  const error=$('#siteAccessError');
-  if(!gate || !input || !submit) return;
-  const showError=()=>{
-    error?.classList.add('show');
-    error?.classList.remove('shake');
-    void error?.offsetWidth;
-    error?.classList.add('shake');
-    input.classList.remove('shake');
-    void input.offsetWidth;
-    input.classList.add('shake');
-    input.select();
-  };
-  const verify=async()=>{
-    const value=input.value.trim();
-    // The field accepts any text. Only S/s is the valid key.
-    const valid=value.length===1 && value.toLowerCase()===String.fromCharCode(115);
-    if(!valid){ showError(); return; }
-    submit.classList.add('unlocking');
-    gate.classList.add('success');
-    await wait(520);
-    gate.classList.add('is-closing');
-    document.body.classList.remove('pre-access');
-    document.documentElement.classList.remove('pre-access');
-    await wait(820);
-    gate.remove();
-    playOpeningReveal();
-  };
-  submit.addEventListener('click',verify);
-  input.addEventListener('keydown',e=>{if(e.key==='Enter')verify()});
-  input.addEventListener('input',()=>error?.classList.remove('show'));
-  setTimeout(()=>input.focus(),120);
-}
-
-function setPasswordMode(mode){
-  if(!passwordModal)return;
-  const kicker=$('.password-kicker',passwordModal);
-  const title=$('#passwordTitle');
-  const copy=$('.password-copy',passwordModal);
-  const submit=$('.password-submit span',passwordModal);
-  const note=$('.password-note',passwordModal);
-  if(mode==='letter'){
-    passwordModal.classList.remove('site-gate');
-    if(kicker)kicker.textContent='PRIVATE LETTER · ACCESS';
-    if(title)title.textContent='الوصول إلى الجواب';
-    if(copy)copy.textContent='هذا الجزء محمي بكلمة مرور.';
-    if(submit)submit.textContent='فتح';
     if(note)note.textContent='';
   }
 }
 
-function handlePasswordSubmit(){ return verifyLetterPassword(); }
+function setupAccessGate(){
+  if(!passwordModal || !passwordInput || !passwordSubmit) return;
+  document.body.classList.add('access-locked');
+  setPasswordMode('site');
+  passwordModal.classList.add('open','site-gate');
+  passwordModal.setAttribute('aria-hidden','false');
+  passwordError?.classList.remove('show');
+  passwordInput.value='';
+  setTimeout(()=>{try{passwordInput.focus();}catch(e){}},180);
+  passwordSubmit.onclick = handlePasswordSubmit;
+  passwordInput.onkeydown = e=>{if(e.key==='Enter'){e.preventDefault();handlePasswordSubmit()}};
+  passwordInput.oninput = ()=>passwordError?.classList.remove('show');
+}
+async function handlePasswordSubmit(){
+  if(passwordModal?.classList.contains('site-gate')) return verifySiteAccess();
+  return verifyLetterPassword();
+}
 
+async function verifySiteAccess(){
+  if(!passwordInput)return;
+  const value=passwordInput.value.trim().toUpperCase();
+  if(value!=='S'){
+    passwordError?.classList.add('show');
+    passwordInput.classList.remove('shake');
+    void passwordInput.offsetWidth;
+    passwordInput.classList.add('shake');
+    passwordInput.select();
+    return;
+  }
+  passwordSubmit?.classList.add('unlocking');
+  burst($('.password-seal',passwordModal));
+  $('.password-card',passwordModal)?.classList.add('accepted');
+  await wait(720);
+  closeSiteAccess();
+  passwordSubmit?.classList.remove('unlocking');
+}
+function closeSiteAccess(){
+  document.body.classList.remove('access-locked');
+  $('#preloader')?.classList.add('hide');
+  passwordModal?.classList.remove('open','site-gate');
+  passwordModal?.setAttribute('aria-hidden','true');
+  if(passwordModal) passwordModal.style.display='none';
+  if(intro){ intro.style.visibility='visible'; intro.style.opacity='1'; intro.style.pointerEvents='auto'; }
+  if(startButton){ startButton.disabled=false; startButton.style.visibility='visible'; startButton.style.pointerEvents='auto'; }
+  passwordInput?.blur();
+  $('.password-card',passwordModal)?.classList.remove('accepted');
+}
+async function playOpeningReveal(){
+  const reveal=$('#cinematicReveal');
+  if(!reveal)return;
+  document.body.classList.add('opening-reveal-active');
+  reveal.classList.remove('fade-out');
+  reveal.classList.add('play');
+  await wait(2400);
+  reveal.classList.add('fade-out');
+  await wait(850);
+  reveal.classList.remove('play','fade-out');
+  document.body.classList.remove('opening-reveal-active');
+}
 async function startExperience(event) {
   event?.preventDefault();
-  if (state.started) return;
+  if (state.started || document.body.classList.contains('access-locked') || !intro) return;
   state.started = true;
+  intro.style.visibility='visible';
   stopScroll();
   burst(startButton);
   musicStart();
   startButton.classList.add('pressed');
 
-  if (window.gsap) {
-    gsap.to('.intro-center', {
-      scale: .9,
-      opacity: 0,
-      y: -22,
-      duration: .55,
-      ease: 'power3.in'
-    });
-  }
+  if (window.gsap) gsap.to('.intro-center',{scale:.9,opacity:0,y:-22,duration:.55,ease:'power3.in'});
 
+  const cinematic = playOpeningReveal();
   await wait(280);
   intro?.classList.add('opening');
+  scheduleReassuranceModal();
   createPetalBurst(34);
-  await wait(1500);
+  await cinematic;
 
   site?.classList.add('visible');
-  site?.setAttribute('aria-hidden', 'false');
-
-  if (window.gsap) {
-    gsap.from('.hero-inner > *', {
-      opacity: 0,
-      y: 34,
-      duration: 1,
-      stagger: .08,
-      ease: 'power3.out'
-    });
-  }
+  site?.setAttribute('aria-hidden','false');
+  if (window.gsap) gsap.from('.hero-inner > *',{opacity:0,y:34,duration:1,stagger:.08,ease:'power3.out'});
 
   await wait(550);
   intro?.classList.add('done');
@@ -216,9 +208,29 @@ async function startExperience(event) {
   startGentleOpeningScroll();
 }
 
+function scheduleReassuranceModal(){
+  if(!reassuranceModal || reassuranceModal.dataset.scheduled==='1') return;
+  reassuranceModal.dataset.scheduled='1';
+  window.setTimeout(openReassuranceModal,5000);
+}
+
+function openReassuranceModal(){
+  if(!reassuranceModal || !state.started) return;
+  stopScroll();
+  reassuranceModal.classList.add('open');
+  reassuranceModal.setAttribute('aria-hidden','false');
+  if(window.gsap) gsap.fromTo('.reassurance-card',{opacity:0,y:22,scale:.975},{opacity:1,y:0,scale:1,duration:1.05,ease:'power3.out'});
+}
+
+function closeReassuranceModal(){
+  if(!reassuranceModal) return;
+  const finish=()=>{reassuranceModal.classList.remove('open');reassuranceModal.setAttribute('aria-hidden','true');resumeScroll();};
+  if(window.gsap) gsap.to('.reassurance-card',{opacity:0,y:10,scale:.99,duration:.5,ease:'power2.in',onComplete:finish});
+  else finish();
+}
 
 function startGentleOpeningScroll(){
-  if (state.autoScrollFrame || matchMedia('\(prefers-reduced-motion: reduce\)').matches) return;
+  if (state.autoScrollFrame || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   state.autoScrollStopped = false;
   state.autoScrollPausedUntil = performance.now() + 900;
   const speed = window.innerWidth < 600 ? 7.2 : 10.5;
@@ -272,25 +284,45 @@ function setupScrollAnimations() {
   });
 }
 
-const MAIN_SONGS = ['music/song-1.mp3','music/song-2.mp3','music/song-3.mp3','music/song-4.mp3'];
-const MAIN_SONG_NAMES = ['A little song for you','For my favorite person','White roses & memories','Always, Suhaila'];
+const MAIN_SONGS = [
+  'music/song-1.mp3',
+  'music/song-2.mp3',
+  'music/song-3.mp3',
+  'music/song-4.mp3'
+];
+const MAIN_SONG_NAMES = [
+  'A little song for you',
+  'For my favorite person',
+  'White roses & memories',
+  'Always, Suhaila'
+];
 let musicNext = null;
+const MUSIC_VOLUME = 0.72;
+const MUSIC_CROSSFADE = 2600;
+const MUSIC_PRELOAD_AHEAD = 4.0;
 
 function activeMusicDeck(){
   return state.activeDeck === 1 ? musicNext : music;
 }
-
 function otherMusicDeck(){
   return state.activeDeck === 1 ? music : musicNext;
 }
 
-function prepareDeck(deck, index){
+function setDeckSource(deck,index){
   if(!deck) return;
-  deck.pause();
-  deck.volume = 0;
+  index = (index + MAIN_SONGS.length) % MAIN_SONGS.length;
+  const current = deck.dataset.songSrc || '';
+  const src = MAIN_SONGS[index];
   deck.dataset.index = String(index);
-  deck.src = MAIN_SONGS[index];
-  deck.load();
+  if(current !== src){
+    deck.pause();
+    deck.currentTime = 0;
+    deck.volume = 0;
+    deck.dataset.songSrc = src;
+    deck.src = src;
+    deck.preload = 'auto';
+    deck.load();
+  }
 }
 
 function chooseMainSong(){
@@ -299,82 +331,173 @@ function chooseMainSong(){
   if(!Number.isInteger(index) || index < 0 || index >= MAIN_SONGS.length) index = 0;
   state.songIndex = index;
   state.activeDeck = 0;
-  prepareDeck(music, index);
-  if(musicNext) prepareDeck(musicNext, (index + 1) % MAIN_SONGS.length);
-  localStorage.setItem('suhailaMainSongIndex', String((index + 1) % MAIN_SONGS.length));
+  state.mainCrossfading = false;
+  setDeckSource(music,index);
+  if(musicNext) setDeckSource(musicNext,(index+1)%MAIN_SONGS.length);
+  syncMainPlayer();
 }
 
-function crossfadeDecks(nextIndex, duration=1200){
-  if(!music || !musicNext || state.mainCrossfading) return;
-  const from = activeMusicDeck();
-  const to = otherMusicDeck();
-  if(!from || !to) return;
-  state.mainCrossfading = true;
-  nextIndex = (nextIndex + MAIN_SONGS.length) % MAIN_SONGS.length;
-  prepareDeck(to, nextIndex);
-  const begin = () => {
-    to.currentTime = 0;
-    to.volume = 0;
-    const p = to.play();
-    if(p?.catch) p.catch(()=>{});
-    const started = performance.now();
-    const fromStart = from.volume || .72;
-    const tick = now => {
-      const q = Math.min(1, (now-started)/duration);
+function fadeDeckVolume(deck,target,duration=700){
+  if(!deck) return Promise.resolve();
+  const from = Number.isFinite(deck.volume) ? deck.volume : 0;
+  const start = performance.now();
+  return new Promise(resolve=>{
+    const tick = now=>{
+      const q = Math.min(1,(now-start)/duration);
       const e = 1-Math.pow(1-q,3);
-      from.volume = fromStart * (1-e);
-      to.volume = .72 * e;
-      if(q < 1){ requestAnimationFrame(tick); return; }
-      from.pause();
-      from.currentTime = 0;
-      state.activeDeck = state.activeDeck === 0 ? 1 : 0;
-      state.songIndex = nextIndex;
-      state.mainCrossfading = false;
-      localStorage.setItem('suhailaMainSongIndex', String((nextIndex+1)%MAIN_SONGS.length));
-      syncMainPlayer();
-      prebufferNextMainSong();
+      deck.volume = from + (target-from)*e;
+      if(q<1) requestAnimationFrame(tick); else resolve();
     };
     requestAnimationFrame(tick);
-  };
-  if(to.readyState >= 2) begin();
-  else to.addEventListener('canplay', begin, {once:true});
-}
-
-function prebufferNextMainSong(){
-  const next = otherMusicDeck();
-  if(!next) return;
-  const nextIndex = (state.songIndex + 1) % MAIN_SONGS.length;
-  prepareDeck(next, nextIndex);
+  });
 }
 
 function syncMainPlayer(){
-  const deck = activeMusicDeck();
-  const track = $('#playerTrack');
-  const vinyl = $('#vinyl');
-  if(track) track.textContent = `${String(state.songIndex+1).padStart(2,'0')} · ${MAIN_SONG_NAMES[state.songIndex]}`;
-  vinyl?.classList.toggle('playing', !!deck && !deck.paused);
-  const play = $('#playerPlay');
-  if(play) play.querySelector('span').textContent = deck && !deck.paused ? 'Ⅱ' : '▶';
-}
-
-function syncMainProgress(){
-  const deck = activeMusicDeck();
-  const progress = $('#playerProgress');
-  const time = $('#playerTime');
-  if(!deck) return;
-  const d=deck.duration||0,c=deck.currentTime||0;
-  if(progress) progress.value=d?(c/d*100):0;
-  if(time) time.textContent=`${fmtTime(c)} / ${fmtTime(d)}`;
+  const deck=activeMusicDeck();
+  const track=$('#playerTrack');
+  const vinyl=$('#vinyl');
+  if(track) track.textContent=`${String((state.songIndex||0)+1).padStart(2,'0')} · ${MAIN_SONG_NAMES[state.songIndex||0]}`;
+  vinyl?.classList.toggle('playing',!!deck && !deck.paused && deck.volume>0.02);
+  const play=$('#playerPlay');
+  if(play){const icon=play.querySelector('span');if(icon)icon.textContent=deck&&!deck.paused?'Ⅱ':'▶';}
 }
 
 function fmtTime(x){
-  if(!isFinite(x)) return '0:00';
+  if(!Number.isFinite(x) || x<0) return '0:00';
   return `${Math.floor(x/60)}:${String(Math.floor(x%60)).padStart(2,'0')}`;
+}
+function syncMainProgress(){
+  const deck=activeMusicDeck(); if(!deck)return;
+  const p=$('#playerProgress'),t=$('#playerTime');
+  const d=deck.duration||0,c=deck.currentTime||0;
+  if(p)p.value=d?(c/d*100):0;
+  if(t)t.textContent=`${fmtTime(c)} / ${fmtTime(d)}`;
+}
+
+function prebufferNextMainSong(){
+  const next=otherMusicDeck();
+  if(!next)return;
+  const nextIndex=(state.songIndex+1)%MAIN_SONGS.length;
+  setDeckSource(next,nextIndex);
+}
+
+function crossfadeDecks(nextIndex,duration=MUSIC_CROSSFADE){
+  if(!music || !musicNext || state.mainCrossfading) return false;
+  const from=activeMusicDeck(), to=otherMusicDeck();
+  if(!from || !to || from===to) return false;
+  if(state.pendingCanPlayHandler){ try{to.removeEventListener('canplay',state.pendingCanPlayHandler);}catch(e){} state.pendingCanPlayHandler=null; }
+  nextIndex=(nextIndex+MAIN_SONGS.length)%MAIN_SONGS.length;
+  setDeckSource(to,nextIndex);
+
+  const begin=()=>{
+    to.removeEventListener('canplay',begin);
+    if(state.pendingCanPlayHandler===begin) state.pendingCanPlayHandler=null;
+    if(state.mainCrossfading || activeMusicDeck()!==from) return;
+    state.mainCrossfading=true;
+    state.pendingNextIndex=nextIndex;
+    to.currentTime=0; to.volume=0;
+    const p=to.play(); if(p?.catch)p.catch(()=>{});
+    const start=performance.now();
+    const fromStart=Math.max(0,Math.min(MUSIC_VOLUME,from.volume||MUSIC_VOLUME));
+    const tick=now=>{
+      const q=Math.min(1,(now-start)/duration),e=1-Math.pow(1-q,3);
+      from.volume=fromStart*(1-e); to.volume=MUSIC_VOLUME*e;
+      if(q<1){requestAnimationFrame(tick);return;}
+      from.pause(); from.currentTime=0; from.volume=0;
+      state.activeDeck=state.activeDeck===0?1:0;
+      state.songIndex=nextIndex; state.mainCrossfading=false; state.pendingNextIndex=null;
+      localStorage.setItem('suhailaMainSongIndex',String(nextIndex));
+      syncMainPlayer(); prebufferNextMainSong();
+    };
+    requestAnimationFrame(tick);
+  };
+
+  if(to.readyState>=3) begin();
+  else {
+    state.pendingCanPlayHandler=begin;
+    to.addEventListener('canplay',begin,{once:true});
+    // If loading is unusually slow, the ended handler below will use forceNextTrack().
+  }
+  return true;
+}
+function forceNextTrack(){
+  if(!music || !musicNext || state.mainCrossfading) return;
+  const from=activeMusicDeck(), to=otherMusicDeck();
+  const nextIndex=(state.songIndex+1)%MAIN_SONGS.length;
+  if(state.pendingCanPlayHandler){try{to.removeEventListener('canplay',state.pendingCanPlayHandler);}catch(e){} state.pendingCanPlayHandler=null;}
+  setDeckSource(to,nextIndex);
+  const launch=()=>{
+    to.removeEventListener('canplay',launch);
+    if(state.pendingCanPlayHandler===launch) state.pendingCanPlayHandler=null;
+    if(state.mainCrossfading)return;
+    state.mainCrossfading=true; state.pendingNextIndex=nextIndex;
+    to.currentTime=0; to.volume=0;
+    const p=to.play(); if(p?.catch)p.catch(()=>{});
+    const start=performance.now(); const fromStart=from?.paused?0:Math.min(MUSIC_VOLUME,from.volume||MUSIC_VOLUME);
+    const tick=now=>{
+      const q=Math.min(1,(now-start)/1400),e=1-Math.pow(1-q,3);
+      if(from)from.volume=fromStart*(1-e); to.volume=MUSIC_VOLUME*e;
+      if(q<1){requestAnimationFrame(tick);return;}
+      if(from){from.pause();from.currentTime=0;from.volume=0;}
+      state.activeDeck=state.activeDeck===0?1:0; state.songIndex=nextIndex; state.mainCrossfading=false; state.pendingNextIndex=null;
+      localStorage.setItem('suhailaMainSongIndex',String(nextIndex)); syncMainPlayer(); prebufferNextMainSong();
+    }; requestAnimationFrame(tick);
+  };
+  if(to.readyState>=3) launch(); else {state.pendingCanPlayHandler=launch; to.addEventListener('canplay',launch,{once:true});}
+}
+function setupMusic(){
+  musicNext=$('#birthdayMusicNext');
+  if(!music)return;
+  music.preload='auto';
+  if(musicNext)musicNext.preload='auto';
+  chooseMainSong();
+
+  const decks=[music,musicNext].filter(Boolean);
+  decks.forEach(deck=>{
+    deck.addEventListener('play',()=>{
+      state.music=true;
+      musicButton?.classList.add('playing');
+      syncMainPlayer();
+    });
+    deck.addEventListener('pause',()=>{
+      if(deck===activeMusicDeck() && !state.mainCrossfading)syncMainPlayer();
+    });
+    deck.addEventListener('timeupdate',()=>{
+      if(deck!==activeMusicDeck())return;
+      syncMainProgress();
+      const duration=deck.duration||0;
+      const remaining=duration-(deck.currentTime||0);
+      if(duration>0 && remaining<=MUSIC_PRELOAD_AHEAD && !state.mainCrossfading){
+        crossfadeDecks((state.songIndex+1)%MAIN_SONGS.length,MUSIC_CROSSFADE);
+      }
+    });
+    deck.addEventListener('loadedmetadata',()=>{if(deck===activeMusicDeck())syncMainProgress()});
+    deck.addEventListener('error',()=>{
+      if(deck===activeMusicDeck() && !state.mainCrossfading){
+        // Do not loop a broken track forever; move on to the next available file.
+        setTimeout(()=>crossfadeDecks((state.songIndex+1)%MAIN_SONGS.length,1200),250);
+      }
+    });
+    deck.addEventListener('ended',()=>{
+      if(deck!==activeMusicDeck() || state.mainCrossfading)return;
+      forceNextTrack();
+    });
+  });
+
+  musicButton?.addEventListener('click',()=>{
+    const deck=activeMusicDeck();if(!deck)return;
+    if(deck.paused){
+      deck.play().then(()=>{state.music=true;musicButton.classList.add('playing');fadeDeckVolume(deck,MUSIC_VOLUME,650);}).catch(()=>{});
+    }else{
+      fadeDeckVolume(deck,0,650).then(()=>deck.pause());
+      state.music=false;musicButton.classList.remove('playing');
+    }
+  });
 }
 
 function musicStart(){
-  if(!music) return;
-  chooseMainSong();
+  if(!music)return;
+  if(!music.src || music.dataset.songSrc===undefined) chooseMainSong();
   const deck=activeMusicDeck();
   deck.volume=0;
   const p=deck.play();
@@ -382,101 +505,46 @@ function musicStart(){
     p.then(()=>{
       state.music=true;
       musicButton?.classList.add('playing');
+      fadeDeckVolume(deck,MUSIC_VOLUME,1100);
       syncMainPlayer();
-      fadeDeckVolume(deck,.72,1000);
+      prebufferNextMainSong();
     }).catch(()=>{});
   }
-}
-
-function fadeDeckVolume(deck,target,duration=600){
-  if(!deck) return;
-  const from=deck.volume, start=performance.now();
-  const tick=now=>{
-    const q=Math.min(1,(now-start)/duration),e=1-Math.pow(1-q,3);
-    deck.volume=from+(target-from)*e;
-    if(q<1) requestAnimationFrame(tick);
-  };
-  requestAnimationFrame(tick);
-}
-
-function setupMusic(){
-  musicNext = $('#birthdayMusicNext');
-  if(!music) return;
-  const decks=[music,musicNext].filter(Boolean);
-  decks.forEach(deck=>{
-    deck.addEventListener('play',()=>{state.music=true;musicButton?.classList.add('playing');syncMainPlayer()});
-    deck.addEventListener('pause',()=>{if(deck===activeMusicDeck() && !state.mainCrossfading){syncMainPlayer()}});
-    deck.addEventListener('timeupdate',()=>{
-      if(deck===activeMusicDeck()){
-        syncMainProgress();
-        const remaining=(deck.duration||0)-(deck.currentTime||0);
-        if(remaining>0 && remaining<=1.35 && !state.mainCrossfading){
-          crossfadeDecks((state.songIndex+1)%MAIN_SONGS.length,1350);
-        }
-      }
-    },{passive:true});
-    deck.addEventListener('loadedmetadata',()=>{if(deck===activeMusicDeck())syncMainProgress()});
-    deck.addEventListener('ended',()=>{
-      if(deck===activeMusicDeck() && !state.mainCrossfading) crossfadeDecks((state.songIndex+1)%MAIN_SONGS.length,450);
-    });
-  });
-  musicButton?.addEventListener('click',()=>{
-    const deck=activeMusicDeck(); if(!deck)return;
-    if(deck.paused){
-      deck.play().then(()=>{state.music=true;musicButton.classList.add('playing');fadeDeckVolume(deck,.72,500)}).catch(()=>{});
-    }else{
-      fadeDeckVolume(deck,0,300);
-      setTimeout(()=>deck.pause(),320);
-      state.music=false;musicButton.classList.remove('playing');
-    }
-  });
-}
-
-function crossfade(from,to,fromTarget,toTarget,duration=1200){
-  const start=performance.now();
-  const a=from?.volume ?? 0;
-  const b=to?.volume ?? 0;
-  const tick=now=>{
-    const q=Math.min(1,(now-start)/duration),e=1-Math.pow(1-q,3);
-    if(from)from.volume=a+(fromTarget-a)*e;
-    if(to)to.volume=b+(toTarget-b)*e;
-    if(q<1)requestAnimationFrame(tick);
-  };
-  requestAnimationFrame(tick);
 }
 
 function setupLetterMusic(){
   const letterMusic=$('#letterMusic');
   if(!letterMusic)return;
   letterMusic.volume=0;
-  window.playLetterMusic=()=>{
+  letterMusic.loop=true;
+  window.playLetterMusic=async()=>{
     const main=activeMusicDeck();
-    const startLetter=()=>{
+    state.mainMusicWasPlaying=!!(main && !main.paused);
+    letterMusic.currentTime=0;
+    letterMusic.volume=0;
+    try{
+      await letterMusic.play();
+      if(main && !main.paused) await fadeDeckVolume(main,0,1800);
       letterMusic.volume=0;
-      const p=letterMusic.play();
-      if(p?.then){
-        p.then(()=>crossfade(main,letterMusic,0,.56,1500)).catch(()=>{});
-      }
-    };
-    if(main && !main.paused){
-      // Let the main track fall almost completely away before the private letter song takes over.
-      startLetter();
-    }else startLetter();
+      await fadeDeckVolume(letterMusic,.58,1800);
+    }catch(e){}
   };
-  window.stopLetterMusic=()=>{
+  window.stopLetterMusic=async()=>{
     const main=activeMusicDeck();
-    if(letterMusic.paused){letterMusic.currentTime=0;letterMusic.volume=0;return;}
-    if(main){
-      main.volume=0;
-      if(main.paused) main.play().catch(()=>{});
-      crossfade(letterMusic,main,0,.72,1500);
-    }else{
-      letterMusic.pause();letterMusic.currentTime=0;letterMusic.volume=0;
+    if(!letterMusic.paused){
+      await fadeDeckVolume(letterMusic,0,1800);
+      letterMusic.pause();
+      letterMusic.currentTime=0;
     }
-    setTimeout(()=>{letterMusic.pause();letterMusic.currentTime=0;letterMusic.volume=0;},1550);
+    if(main && state.mainMusicWasPlaying){
+      if(main.paused){try{await main.play();}catch(e){}}
+      await fadeDeckVolume(main,MUSIC_VOLUME,1800);
+      state.music=true; musicButton?.classList.add('playing');
+    }else if(main){
+      main.volume=0; state.music=false; musicButton?.classList.remove('playing');
+    }
   };
 }
-
 
 function burst(element) {
   if (!element) return;
@@ -560,6 +628,8 @@ function setupReveal(){
 
 function setupLetter() {
   if (!envelopeButton || !letterModal) return;
+  reassuranceContinue?.addEventListener('click', closeReassuranceModal);
+  $('.reassurance-backdrop', reassuranceModal)?.addEventListener('click', closeReassuranceModal);
   envelopeButton.addEventListener('click', openPasswordGate);
   // The same password UI is used for the initial site gate and the private letter.
   passwordClose?.addEventListener('click', closePasswordGate);
@@ -573,8 +643,9 @@ function setupLetter() {
   $('.letter-backdrop', letterModal)?.addEventListener('click', closeLetter);
   document.addEventListener('keydown', event => {
     if (event.key === 'Escape') {
-      if (state.letter) closeLetter();
-      else if (passwordModal?.classList.contains('open')) closePasswordGate();
+      if (reassuranceModal?.classList.contains('open')) closeReassuranceModal();
+      else if (state.letter) closeLetter();
+      else if (passwordModal?.classList.contains('open') && !passwordModal.classList.contains('site-gate')) closePasswordGate();
     }
   });
 }
@@ -582,6 +653,7 @@ function setupLetter() {
 function openPasswordGate() {
   if (state.letter || !passwordModal) return;
   setPasswordMode('letter');
+  passwordModal.style.display='grid';
   passwordModal.classList.add('open');
   passwordModal.setAttribute('aria-hidden','false');
   passwordError?.classList.remove('show');
