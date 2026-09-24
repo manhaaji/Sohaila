@@ -1,0 +1,6 @@
+SECURITY NOTE
+
+هذه النسخة تعمل على GitHub Pages، لذلك كلمة المرور حماية واجهة (client-side gate) وليست حماية Server-Side.
+
+أي ملف Static يصل إليه المتصفح يمكن تقنيًا استخراجه من Developer Tools أو من نسخة الموقع المنشورة.
+للحماية الحقيقية للملفات والمحتوى من التحميل قبل كلمة المرور يلزم Server-Side Authentication على استضافة تدعم PHP/Node أو خدمة Auth مناسبة.
